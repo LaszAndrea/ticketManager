@@ -1,5 +1,6 @@
 package hu.me;
 
+import hu.me.domain.User;
 import org.springframework.stereotype.Service;
 
 @Service

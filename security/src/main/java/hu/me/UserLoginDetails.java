@@ -1,6 +1,7 @@
 package hu.me;
 
 
+import hu.me.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

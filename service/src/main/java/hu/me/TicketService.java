@@ -1,8 +1,9 @@
 package hu.me;
 
+import hu.me.domain.User;
+import hu.me.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.*;
 
 import java.util.List;
 

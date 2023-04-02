@@ -1,0 +1,32 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <link href="css/bootstrap.css" rel="stylesheet"/>
+    <link href="css/custom.css" rel="stylesheet"/>
+</head>
+<body>
+<header>
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <div class="navbar-brand">Travel</div>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li sec:authorize="hasAuthority('ADMIN')" class="nav-item">
+                <a class="nav-link" href="admin-home-page">Home</a>
+            </li>
+            <li sec:authorize="hasAuthority('USER')" class="nav-item">
+                <a class="nav-link" href="user-home-page">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="destinations">Destinations</a>
+            </li>
+            <li sec:authorize="hasAuthority('USER')" class="nav-item">
+                <a class="nav-link" href="my-trips">My Trips</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+        </form>
+    </div>
+</nav>
+</header>
+</body>
+</html>

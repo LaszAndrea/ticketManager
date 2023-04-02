@@ -1,4 +1,4 @@
-package hu.me;
+package hu.me.domain;
 
 public enum Role {
 

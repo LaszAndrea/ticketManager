@@ -1,4 +1,4 @@
-package hu.me;
+package hu.me.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
