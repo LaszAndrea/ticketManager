@@ -5,43 +5,7 @@
 </head>
 <header th:replace="/menu.html :: header"/>
 <body>
-<div class="container">
-    <div class="card border border-info border-3">
-        <div class="card-header bg-info">
-            <h3>User details</h3>
-        </div>
-        <div class="card-body bg-light">
-            <dl class="row">
-                <dt class="col-sm-3">Name</dt>
-                <dd class="col-sm-9"></dd>
 
-                <dt class="col-sm-3">Role</dt>
-                <dd class="col-sm-9" th:text="${user.role}"/>
-            </dl>
-        </div>
-    </div>
-
-    <div class="card border border-info border-3">
-        <div class="card-header bg-info">
-            <h3>Statistics for Admin</h3>
-        </div>
-        <div class="card-body bg-light">
-            <dl class="row">
-                <dt class="col-sm-3">Number of Destinations</dt>
-                <dd class="col-sm-9" th:text="${stat.numberOfDestinations}" />
-
-                <dt class="col-sm-3">Number of Attractions</dt>
-                <dd class="col-sm-9" th:text="${stat.numberOfAttractions}"/>
-
-                <dt class="col-sm-3">Number of Users</dt>
-                <dd class="col-sm-9" th:text="${stat.numberOfUsers}"/>
-
-                <dt class="col-sm-3">Number of Reviews</dt>
-                <dd class="col-sm-9" th:text="${stat.numberOfAllReviews}"/>
-            </dl>
-        </div>
-    </div>
-
-</div>
 </body>
+<footer th:replace="/footer.html :: footer" />
 </html>
