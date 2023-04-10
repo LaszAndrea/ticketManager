@@ -1,4 +1,4 @@
-package hu.me;
+/*package hu.me;
 
 
 import hu.me.domain.User;
@@ -50,5 +50,5 @@ public class UserLoginDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-}
+}*/
 

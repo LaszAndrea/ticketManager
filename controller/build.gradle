@@ -2,5 +2,6 @@ dependencies {
     implementation project(':domain')
     implementation project(':service')
     implementation project(':security')
+    implementation project(':model')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }

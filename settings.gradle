@@ -4,4 +4,5 @@ include 'app'
 include 'security'
 include 'service'
 include 'controller'
+include 'model'
 
