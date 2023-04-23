@@ -1,32 +1,32 @@
 package hu.me.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Sights {
+public class Movie {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false, length = 15)
     private String name;
+    @Column(nullable = true, length = 2)
+    private int age;
     @Column(nullable = false, length = 300)
     private String description;
-    @Column(nullable = false, length = 100)
-    private String address;
     @Enumerated(EnumType.STRING)
-    private Category category;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sight")
-    private List<Review> reviews;
-
-    //private BufferedImage img;
+    private Genre genre;
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "movies")
+    private List<User> user;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "movie")
+    private List<Time> times;
 
     public Long getId() {
         return id;
@@ -44,6 +44,14 @@ public class Sights {
         this.name = name;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -52,11 +60,11 @@ public class Sights {
         this.description = description;
     }
 
-    public String getAddress() {
-        return address;
+    public Genre getGenre() {
+        return genre;
     }
 
-    public void setAddress(String adress) {
-        this.address = adress;
+    public void setGenre(Genre genre) {
+        this.genre = genre;
     }
 }
