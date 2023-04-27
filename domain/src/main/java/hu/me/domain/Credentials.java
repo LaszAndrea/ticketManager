@@ -13,7 +13,7 @@ public class Credentials {
 
     @Column(unique=true, nullable = false, length = 45)
     private String loginName;
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String password;
 
     public String getLoginName() {

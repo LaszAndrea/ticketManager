@@ -1,6 +1,6 @@
 INSERT INTO  Felhasznalok(id, full_name, role, login_name, password) VALUES
-    (000, 'Vendég felhasználó', 'USER', 'vendeg', 'vendeg'),
-    (102, 'Andrea László', 'ADMIN', 'alaszlo', 'la-secret');
+    (000, 'Vendég felhasználó', 'USER', 'vendeg@gmail.com', 'vendeg'),
+    (102, 'Andrea László', 'ADMIN', 'alaszlo@gmail.com', 'la-secret');
 INSERT INTO  Movie(id, name, age, description, genre) VALUES
     (1,'A gép', '18', 'Gépről szóló múvi', 'ACTION');
 INSERT INTO  Time(id, time_date, movie_id) VALUES

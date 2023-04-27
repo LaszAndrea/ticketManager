@@ -1,10 +1,10 @@
 <html lang="hu" xmlns="http://www.w3.org/1999/xhtml"  xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8"/>
+
     <link href="http://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.min.js" integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
 </head>
 <header>
 
@@ -46,16 +46,10 @@
         }
     </style>
 
-    <script  th:inline="javascript">
-        function showReg() {
-          var x = document.getElementById("showRegistration");
-          if (x.style.display === "none") {
-            x.style.display = "block";
-          } else {
-            x.style.display = "none";
-          }
-        }
-    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+
 
     <nav class="navbar navbar-expand sticky-top bg-success">
         <div class="container-fluid fs-5">
@@ -78,7 +72,7 @@
                     </li>
 
                     <li class="nav-item dropdown marginRight">
-                        <a class="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="myFunction()">
+                        <a class="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
                             Szórakozás
                         </a>
                         <ul class="dropdown-menu short" id="showEntertainment">
@@ -90,25 +84,23 @@
                 </ul>
 
                 <!--Login oldalra irányít ha nincs valaki bejelentkezve-->
-                <div th:if="${#authentication == null}">
-                    <div class="d-flex my-2 my-lg-0 me-3">
-                        <button class="btn btn-outline-light" th:action="@{/login}">Bejelentkezés</button>
-                    </div>
-                </div>
+                <form sec:authorize="isAnonymous()" method="post" class="d-flex my-2 my-lg-0 me-3" th:action="@{/login}">
+                    <button class="btn btn-outline-light" >Bejelentkezés</button>
+                </form>
 
                 <!--Bejelentkezett felhasználó neve-->
-                <div th:if="${!(#authentication == null)}">
+                <div sec:authorize="isAuthenticated()">
                     <label class="nav-item me-4 text-light hover-underline-animation"  th:text="'Helló, ' + ${userName}" />
                 </div>
 
                 <!--Kijelentkezés, amennyiben már valaki be van jelentkezve-->
-                <form  th:if="${!(#authentication == null)}" class="d-flex my-2 my-lg-0 me-3" th:action="@{/logout}" method="post" tyle="margin-right: 5%;">
+                <form  sec:authorize="isAuthenticated()" class="d-flex my-2 my-lg-0 me-3" th:action="@{/logout}" method="post" tyle="margin-right: 5%;">
                     <button class="btn btn-light" type="submit">Kijelentkezés</button>
                 </form>
 
                 <!--Lehetővé teszi a regisztrációt, ha nincs még senki bejelentkezve-->
-                <div sec:authorize="hasAnyRole('USER','ADMIN')" class="dropdown" style="margin-right: 5%;">
-                    <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" th:onclick="showReg()" aria-expanded="false" data-bs-auto-close="outside">
+                <div  sec:authorize="isAnonymous()" class="dropdown" style="margin-right: 5%;">
+                    <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                       Regisztráció
                     </button>
                     <form class="dropdown-menu dmb p-4 dropdown-menu-end" id="showRegistration" th:action="@{/save}" method="post" th:object="${newUser}">
@@ -126,7 +118,7 @@
                       </div>
                       <div class="mb-3">
                         <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="remember">
+                          <input type="checkbox" class="form-check-input" id="remember" name="checkbox" value="checked">
                           <label class="form-check-label" for="remember">
                             Emlékezz rám
                           </label>
@@ -141,7 +133,7 @@
                     <button type="button" class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                         HU
                     </button>
-                    <ul class="dropdown-menu short">
+                    <ul class="dropdown-menu short" id="showLanguage">
                         <li><a class="dropdown-item" href="#en.html">EN</a></li>
                     </ul>
                 </div>
