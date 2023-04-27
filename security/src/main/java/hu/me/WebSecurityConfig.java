@@ -1,4 +1,4 @@
-/*package hu.me;
+package hu.me;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,16 +18,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/static/**").permitAll()
                 .antMatchers("/admin-home-page").hasAuthority("ADMIN")
-                .antMatchers("/user-home-page").hasAuthority("USER")
-                .antMatchers("/my-trips").hasAuthority("USER")
                 .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()
-                .and().formLogin().permitAll();
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .permitAll();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
-}*/
+}
 

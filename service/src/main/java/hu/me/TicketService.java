@@ -32,5 +32,8 @@ public class TicketService implements TicketServiceInterface {
                 .findFirst().orElse(null);
 
     }
+    public void save(User user) {
+        uRep.save(user);
+    }
 
 }

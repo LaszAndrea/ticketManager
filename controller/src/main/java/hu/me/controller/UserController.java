@@ -1,6 +1,7 @@
 package hu.me.controller;
 
 //import hu.me.UserLoginDetailsService;
+import hu.me.UserLoginDetailsService;
 import hu.me.domain.User;
 import hu.me.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +15,16 @@ public class UserController {
     @Autowired
     private UserRepository uRep;
 
-    //@Autowired
-    //private UserLoginDetailsService ulds;
+    @Autowired
+    private UserLoginDetailsService ulds;
 
     @GetMapping("/homepage")
     public String basics(Model model) {
 
-        model.addAttribute("newUser", new User());
+        System.out.print("\n aaa: "+ulds.loadAuthenticatedUsername());
 
-        //model.addAttribute("user", uRep.findByCredentialsLoginName(ulds.loadAuthenticatedUsername()));
+        if (ulds.loadAuthenticatedUsername() != null)
+            model.addAttribute("userName", uRep.findByCredentialsLoginName(ulds.loadAuthenticatedUsername()).getFullName());
 
         return "homepage";
 

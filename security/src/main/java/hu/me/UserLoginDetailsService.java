@@ -1,4 +1,4 @@
-/*package hu.me;
+package hu.me;
 
 import hu.me.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +35,5 @@ public class UserLoginDetailsService implements UserDetailsService{
         return username;
     }
 
-}*/
+}
 
