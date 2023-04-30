@@ -3,5 +3,6 @@ dependencies {
     implementation project(':service')
     implementation project(':security')
     implementation project(':model')
+    implementation project(':transformer')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }

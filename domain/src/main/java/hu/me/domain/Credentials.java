@@ -1,7 +1,9 @@
 package hu.me.domain;
 
+import hu.me.UniqueEmail;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -12,6 +14,7 @@ import javax.persistence.Embeddable;
 public class Credentials {
 
     @Column(unique=true, nullable = false, length = 45)
+    @UniqueEmail
     private String loginName;
     @Column(nullable = false)
     private String password;

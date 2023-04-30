@@ -15,7 +15,7 @@
         }
         .dmb {
             width: 300px !important;
-            height: 400px !important;
+            height: 430px !important;
             right: 0% !important;
         }
         .short{
@@ -64,7 +64,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                     <li class="nav-item marginRight">
-                        <a class="nav-link text-light" href="#sights.html">Látnivalók</a>
+                        <a class="nav-link text-light" th:href="@{/sights}">Látnivalók</a>
                     </li>
 
                     <li class="nav-item marginRight">
@@ -84,7 +84,7 @@
                 </ul>
 
                 <!--Login oldalra irányít ha nincs valaki bejelentkezve-->
-                <form sec:authorize="isAnonymous()" method="post" class="d-flex my-2 my-lg-0 me-3" th:action="@{/login}">
+                <form sec:authorize="isAnonymous()" method="get" class="d-flex my-2 my-lg-0 me-3" th:action="@{/login}">
                     <button class="btn btn-outline-light" >Bejelentkezés</button>
                 </form>
 
@@ -99,18 +99,20 @@
                 </form>
 
                 <!--Lehetővé teszi a regisztrációt, ha nincs még senki bejelentkezve-->
-                <div  sec:authorize="isAnonymous()" class="dropdown" style="margin-right: 5%;">
-                    <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                <div  sec:authorize="isAnonymous()" class="dropdown" style="margin-right: 5%;" th:object="${newUser}">
+                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"
+                            th:classappend="${#fields.hasErrors('credentials.loginName')} ? 'btn-danger' : 'btn-light'">
                       Regisztráció
                     </button>
-                    <form class="dropdown-menu dmb p-4 dropdown-menu-end" id="showRegistration" th:action="@{/save}" method="post" th:object="${newUser}">
+                    <form class="dropdown-menu dmb p-4 dropdown-menu-end" id="showRegistration" th:action="@{/save}" method="post" >
                       <div class="mb-3">
                         <label for="fullNameGiven" class="form-label">Teljes név</label>
                         <input type="text" class="form-control" th:field="*{fullName}" id="fullNameGiven" required minlength="2" maxlength="40">
                       </div>
                       <div class="mb-3">
                         <label for="emailGiven" class="form-label">Email cím</label>
-                        <input type="email" class="form-control" th:field="*{credentials.loginName}" id="emailGiven" placeholder="email@pelda.hu" required>
+                        <input type="email" class="form-control" th:field="*{credentials.loginName}" id="emailGiven" placeholder="email@pelda.hu">
+                        <span class="text-danger" th:errorclass="error" th:if="${#fields.hasErrors('credentials.loginName')}" th:errors="*{credentials.loginName}"></span>
                       </div>
                       <div class="mb-3">
                         <label for="passwordGiven" class="form-label">Jelszó</label>
@@ -124,7 +126,7 @@
                           </label>
                         </div>
                       </div>
-                      <button type="submit" class="btn btn-success">Regisztráció</button>
+                      <button type="submit" class="btn btn-success" >Regisztráció</button>
                     </form>
                 </div>
 

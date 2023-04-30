@@ -2,14 +2,17 @@ package hu.me.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="Felhasznalok")
+@Table(name="_1_Users")
 public class User {
 
     @Id
@@ -20,12 +23,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     @Embedded
+    @Valid
     private Credentials credentials;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Review> reviews;
     @ManyToMany
     @JoinTable(
-            name = "reserved",
+            name = "_3_Reserved",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "movie_id"))
     private List<Movie> movies;
@@ -69,4 +73,16 @@ public class User {
         this.credentials = credentials;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id) && fullName.equals(user.fullName) && role == user.role && credentials.equals(user.credentials) && reviews.equals(user.reviews) && movies.equals(user.movies);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, fullName, role, credentials, reviews, movies);
+    }
 }

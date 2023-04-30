@@ -10,6 +10,7 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name="_6_Sights")
 public class Sights {
 
     @Id
@@ -25,8 +26,6 @@ public class Sights {
     private Category category;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sight")
     private List<Review> reviews;
-
-    //private BufferedImage img;
 
     public Long getId() {
         return id;
@@ -56,7 +55,23 @@ public class Sights {
         return address;
     }
 
-    public void setAddress(String adress) {
-        this.address = adress;
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
