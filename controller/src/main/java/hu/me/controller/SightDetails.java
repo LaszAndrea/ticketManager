@@ -5,10 +5,7 @@ import hu.me.UserLoginDetailsService;
 import hu.me.domain.Review;
 import hu.me.domain.Sights;
 import hu.me.domain.User;
-import hu.me.model.ReviewListModel;
-import hu.me.model.ReviewModel;
-import hu.me.model.ShowSightDetailsModel;
-import hu.me.model.SightModel;
+import hu.me.model.*;
 import hu.me.repository.ReviewRepository;
 import hu.me.repository.SightRepository;
 import hu.me.repository.UserRepository;
@@ -44,7 +41,7 @@ public class SightDetails {
     @Autowired
     private UserLoginDetailsService userLoginDetailsService;
 
-    @ModelAttribute("sightModel")
+    @ModelAttribute("sight")
     public SightModel createSightModel(ShowSightDetailsModel showSightDetailsModel) {
         return sightTransformer.transformSightToSightModel(sightRepository.findSightsById(showSightDetailsModel.getSightId()));
     }
@@ -54,11 +51,9 @@ public class SightDetails {
         return new ReviewModel();
     }
 
-
-    @PostMapping("/sight-details")
+    @PostMapping("/create-review")
     public String createReview(@Valid ReviewModel reviewModel, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam("sightId") long sightId) {
         String result;
-        System.out.print(model.asMap());
         if (bindingResult.hasErrors()) {
             result = "sights";
         } else {
@@ -67,7 +62,23 @@ public class SightDetails {
             ticketService.getReviewList();
             Review review = reviewTransformer.transformReviewModelToReview(reviewModel);
             ticketService.addReview(review);
-            redirectAttributes.addFlashAttribute("successMessage", "Review written successfully");
+            //redirectAttributes.addFlashAttribute("successMessage", "Review written successfully");
+            result = "redirect:sight-details?sightId=" + sightId;
+        }
+
+        return result;
+    }
+
+    @PostMapping("/update-details")
+    public String updateSight(@Valid SightModel sightModel, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam("sightId") long sightId) {
+        String result;
+        if (bindingResult.hasErrors()) {
+            result = "sights";
+        } else {
+
+            Sights sight = sightTransformer.transformSightModelToSight(sightModel);
+            sightRepository.save(sight);
+
             result = "redirect:sight-details?sightId=" + sightId;
         }
 
@@ -86,9 +97,9 @@ public class SightDetails {
     }
 
     @GetMapping(value="/sight-details", params="sightId")
-    private String showDestDetails(Model model) {
+    private String showSightDetails(Model model, @RequestParam("sightId") long sightId) {
 
-        model.addAttribute("reviews", reviewRepository.findAll());
+        model.addAttribute("reviewLatests", ticketService.findLatests(sightId));
         model.addAttribute("newUser", new User());
 
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser")))

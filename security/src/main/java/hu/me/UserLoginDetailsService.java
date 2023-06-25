@@ -21,6 +21,7 @@ public class UserLoginDetailsService implements UserDetailsService{
         if (user == null) {
             throw new UsernameNotFoundException("Wrong Username or Password");
         }
+
         return new UserLoginDetails(user);
     }
 

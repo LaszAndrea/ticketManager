@@ -16,9 +16,9 @@ public class Sights {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false, length = 60)
     private String name;
-    @Column(nullable = false, length = 300)
+    @Column(nullable = false, length = 500)
     private String description;
     @Column(nullable = false, length = 100)
     private String address;

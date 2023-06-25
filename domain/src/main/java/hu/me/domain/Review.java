@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @AllArgsConstructor
@@ -15,6 +16,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, length = 1)
+    @NotNull(message = "Ahhoz, hogy értékelhessen választania kell!")
     private int rating;
     @Column(nullable = true, length = 300)
     private String comment;

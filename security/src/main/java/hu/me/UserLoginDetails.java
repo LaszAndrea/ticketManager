@@ -4,6 +4,7 @@ package hu.me;
 import hu.me.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.Collection;
 import java.util.List;

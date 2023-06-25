@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -63,10 +64,27 @@ public class SightController {
         return result;
     }
 
+    @PostMapping("/delete-sight")
+    public String deleteSight(@Valid SightModel sightModel, BindingResult bindingResult) {
+        String result;
+        System.out.print(bindingResult);
+        if (bindingResult.hasErrors()) {
+            result = "sights";
+        } else {
+            Sights sight = sightTransformer.transformSightModelToSight(sightModel);
+
+            sightRepository.delete(sight);
+            result = "redirect:sights";
+        }
+
+        return result;
+    }
+
     @GetMapping("/sights")
-    public String showSights(Model model) {
+    public String showSights(Model model, @RequestParam("category") String category) {
 
         model.addAttribute("newUser", new User());
+        model.addAttribute("category", category);
 
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser")))
             model.addAttribute("userName", userRepository.findByCredentialsLoginName(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());

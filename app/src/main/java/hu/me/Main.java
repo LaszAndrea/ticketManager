@@ -20,8 +20,11 @@ public class Main {
         Statement stmt = conn.createStatement();
 
         String sql ="INSERT INTO \"PUBLIC\".\"_6_SIGHTS\" VALUES\n" +
-                "(5, 'Cimballom utca 5', 'SIGHT', 'Állatkert nyíregyen', 'Állatkert');\n";/* +
+                "(1, '4431 Nyíregyháza, Fürdőház tér 2.', 'SIGHT', 'Az Élményfürdő az év minden napján nyitva tart, a szabadtéri Parkfürdő pedig nyáron várja a látogatókat. A két fürdő különlegessége, hogy szomszédosak egymással, a nyári szezonban egy belépőjeggyel látogathatók, itt minden korosztály megtalálja a számára kellemes kikapcsolódási formát. Páratlan növénykultúrával rendelkező Parkfürdőben az úszás szerelmesei egy fantasztikus versenyuszoda habjait szelhetik.', 'Aquarius Élmény- és Parkfürdő - Nyíregyháza');\n"+
+                "INSERT INTO \"PUBLIC\".\"_1_USERS\" VALUES\n" +
                 "(102, 'alaszlo@gmail.com', 'la-secret', U&'Andrea L\\00e1szl\\00f3', 'ADMIN');\n" +
+                "INSERT INTO \"PUBLIC\".\"_1_USERS\" VALUES\n" +
+                "(1, 'kisspista@gmail.com', 'kp-secret', 'Kiss Pista', 'USER');\n" +
                 "INSERT INTO \"PUBLIC\".\"_2_MOVIE\" VALUES\n" +
                 "(1, 18, U&'G\\00e9pr\\0151l sz\\00f3l\\00f3 m\\00favi', 'ACTION', U&'A g\\00e9p');\n" +
                 "INSERT INTO \"PUBLIC\".\"_3_RESERVED\" VALUES\n" +
@@ -31,9 +34,9 @@ public class Main {
                 "INSERT INTO \"PUBLIC\".\"_5_SEAT\" VALUES\n" +
                 "(1, TRUE, 1);\n" +
                 "INSERT INTO \"PUBLIC\".\"_6_SIGHTS\" VALUES\n" +
-                "(1, U&'Ny\\00edregyh\\00e1za kis utca ny\\00f3c', 'RESTAURANT', U&'nagyon j\\00f3 hely 10/10', U&'Tr\\00f3fea \\00e9tterem');\n" +
+                "(2, U&'Ny\\00edregyh\\00e1za kis utca ny\\00f3c', 'RESTAURANT', U&'nagyon j\\00f3 hely 10/10', U&'Tr\\00f3fea \\00e9tterem');\n" +
                 "INSERT INTO \"PUBLIC\".\"_7_REVIEW\" VALUES\n" +
-                "(1, U&'kir\\00e1ly', 5, 1, 0);\n";
+                "(1, U&'kir\\00e1ly', 5, 1, 1);\n";
 
         stmt.execute(sql);
         stmt.close();

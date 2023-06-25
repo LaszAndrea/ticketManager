@@ -1,29 +1,39 @@
 <!DOCTYPE html>
 <html lang="hu" xmlns="http://www.w3.org/1999/xhtml"  xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+
     <meta charset="UTF-8">
     <link href="http://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
-    <title></title>
+    <link href="images/favicon.png" rel="icon">
+    <title>Látnivalók</title>
+
 </head>
 <header th:replace="/menu.html :: header"/>
 <body>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
-
-    <div class="container mt-5">
+    <div class="container mb-5" style="margin-top: 11%">
         <div class="row">
             <div class="col-sm-4 mb-4" th:each="sight : ${sightListModel.sightModel}">
-                <div class="card bg-success text-light h-100" th:if="${sight.category.toString().toLowerCase() == 'restaurant'}">
-                    <img class="card-img-top" th:src="@{/images/__${sight.id}__.png}" alt="Card image cap">
+                <div class="card text-light h-100" th:if="${sight.category.toString().toLowerCase() == category}" style="background-color: #025940">
+                    <img class="card-img-top" th:src="@{/images/__${sight.id}__.jpg}" style="object-fit: cover, width: 100%; height: 15vw;" alt="Card image cap">
                     <div class="card-body">
                         <div class="card-contents" style="height: 200px; overflow: hidden;">
                             <h5 class="card-title" th:text="${sight.name}"></h5>
                             <h6 class="card-subtitle mb-2 text-white-50" th:text="${sight.address}"></h6>
-                            <p class="card-text" th:text="${sight.description}"></p>
+                            <p class="card-text" th:text="${#strings.substringBefore(sight.description, '.')}"></p>
                         </div>
-                        <a th:href="@{/sight-details(sightId=${sight.id})}" class="btn btn-light" style="position: absolute; bottom: 10px;">Tovább az oldalra</a>
+                        <a sec:authorize="!hasAuthority('ADMIN')" th:href="@{/sight-details(sightId=${sight.id})}" class="btn" style="position: absolute; bottom: 10px; background-color: #04BF8A">Tovább az oldalra</a>
+                        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/sight-details(sightId=${sight.id})}" class="btn" style="position: absolute; bottom: 10px; background-color: #04BF8A">Szerkesztés</a>
+                        <!--ITT BAJOK VANNAK-->
+                        <form th:href="@{/delete-sight}" th:object="${sight}" method="post">
+                                <input type="hidden" th:field="*{id}" th:value="${sight.id}">
+                                <input type="hidden" th:field="*{name}" th:value="${sight.name}">
+                                <input type="hidden" th:field="*{description}" th:value="${sight.description}">
+                                <input type="hidden" th:field="*{address}" th:value="${sight.address}">
+                                <input type="hidden" th:field="*{category}" th:value="${sight.category}">
+                                <input type="hidden" th:field="*{reviewList}" th:value="${sight.reviewList}">
+                            <button sec:authorize="hasAuthority('ADMIN')" type="submit" class="btn" style="position: absolute; bottom: 10px; background-color: red">Törlés</button>
+                        </form>
                     </div>
                 </div>
             </div>

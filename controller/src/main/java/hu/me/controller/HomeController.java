@@ -35,14 +35,6 @@ public class HomeController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String register(@Valid @ModelAttribute("newUser") User newUser, BindingResult result, Model model, HttpServletRequest request) {
 
-
-        /*int strength = 10;
-        BCryptPasswordEncoder bCryptPasswordEncoder =
-                new BCryptPasswordEncoder(strength, new SecureRandom());
-        String encodedPassword = bCryptPasswordEncoder.encode(user.getCredentials().getPassword());
-        System.out.print(encodedPassword);
-        user.getCredentials().setPassword(encodedPassword);*/
-
         newUser.setRole(Role.USER);
 
         if(result.hasErrors()){
@@ -50,12 +42,15 @@ public class HomeController {
             return "homepage";
         }else {
 
+            // szükséges különben a hashelt jelszóval akar  bejelentkeztetni, ami nem fog menni
+            String password = newUser.getCredentials().getPassword();
+
             ticketService.save(newUser);
             boolean checkboxValue = "checked".equals(request.getParameter("checkbox"));
 
             if (checkboxValue) {
                 try {
-                    request.login(newUser.getCredentials().getLoginName(), newUser.getCredentials().getPassword());
+                    request.login(newUser.getCredentials().getLoginName(), password);
                     return "redirect:/homepage";
                 } catch (ServletException e) {
                     throw new RuntimeException(e);

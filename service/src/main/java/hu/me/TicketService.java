@@ -7,10 +7,13 @@ import hu.me.repository.ReviewRepository;
 import hu.me.repository.SightRepository;
 import hu.me.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class TicketService implements TicketServiceInterface {
@@ -67,29 +70,57 @@ public class TicketService implements TicketServiceInterface {
     }
     public void save(User user) {
 
+        String pw_hash = BCrypt.hashpw(user.getCredentials().getPassword(), BCrypt.gensalt());
+        user.getCredentials().setPassword(pw_hash);
+
         uRep.save(user);
 
     }
 
     public void addSight(Sights sight) {
 
-        long currentMax = sightsList.stream()
+        /*long currentMax = sightsList.stream()
                 .map(Sights::getId)
                 .max(Long::compare)
                 .orElse(0L);
-        sight.setId(currentMax + 1);
+        sight.setId(currentMax + 1);*/
         sightRepository.save(sight);
 
     }
 
     public void addReview(Review review) {
 
+        /*reviewList = reviewRepository.findAll();
+
         long currentMax = reviewList.stream()
                 .map(Review::getId)
                 .max(Long::compare)
                 .orElse(0L);
-        review.setId(currentMax + 1);
+
+        review.setId(currentMax + 1);*/
+
         reviewRepository.save(review);
+
+    }
+
+    public List<Review> findLatests(long sightId){
+
+        List<Review> latests = new ArrayList<>();
+        reviewList = reviewRepository.findBySightId(sightId);
+        List<Review> reversed = IntStream
+                .range(0, reviewList.size()).map(i -> reviewList.size() - 1-i)
+                .mapToObj(reviewList::get)
+                .collect(Collectors.toList());
+        int db = 0;
+
+        for (Review review : reversed) {
+            if(db<3){
+                latests.add(review);
+                db++;
+            }
+        }
+
+        return latests;
 
     }
 
