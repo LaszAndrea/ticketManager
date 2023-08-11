@@ -3,7 +3,9 @@ package hu.me.domain;
 public enum Category {
 
     SIGHT,
-    RESTAURANT
+    RESTAURANT,
+    CINEMA,
+    THEATRE
 
 
 }

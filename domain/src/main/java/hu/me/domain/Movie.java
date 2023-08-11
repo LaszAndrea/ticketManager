@@ -16,11 +16,11 @@ public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 15)
+    @Column(nullable = false)
     private String name;
     @Column(nullable = true, length = 2)
     private int age;
-    @Column(nullable = false, length = 300)
+    @Column(nullable = false)
     private String description;
     @Enumerated(EnumType.STRING)
     private Genre genre;
@@ -67,5 +67,21 @@ public class Movie {
 
     public void setGenre(Genre genre) {
         this.genre = genre;
+    }
+
+    public List<User> getUser() {
+        return user;
+    }
+
+    public void setUser(List<User> user) {
+        this.user = user;
+    }
+
+    public List<Time> getTimes() {
+        return times;
+    }
+
+    public void setTimes(List<Time> times) {
+        this.times = times;
     }
 }

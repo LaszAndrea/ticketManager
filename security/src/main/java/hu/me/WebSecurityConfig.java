@@ -1,6 +1,7 @@
 package hu.me;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.servlet.annotation.WebServlet;
 
 
 @Configuration
@@ -28,6 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin-home-page").hasAuthority("ADMIN")
                 .antMatchers("/login").anonymous()
                 .antMatchers("/login?error").denyAll()
+                .antMatchers("/console/**").permitAll()
                 .and()
                 .formLogin()
                 .defaultSuccessUrl("/homepage")
@@ -36,6 +40,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.and()
                 //.formLogin()
                 //.loginPage("/login");
+
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
     }
 
     @Bean

@@ -11,10 +11,46 @@
 <header th:replace="/menu.html :: header"/>
 <body>
 
+    <style>
+        .error {
+            border: 1px solid red;
+        }
+        .btn-error{
+            background-color: red;
+            color: white;
+        }
+        .toggle-content {
+            display: none;
+            right: 0;
+            top:50%;
+            transform: translateY(-50%);
+            position: fixed;
+            background-color: #f1f1f1;
+            padding: 1.5%;
+            padding-left: 4%;
+            width: 350px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+        #toggle-arrow {
+            cursor: pointer;
+            position: fixed;
+            right: 1%;
+            top: 22%;
+            transform: translateY(-50%);
+            background-color: #5cb85c;
+            color: #fff;
+            padding: 5px;
+            border-radius: 55%;
+            z-index: 1;
+        }
+    </style>
+
+    <div id="all">
     <div class="container mb-5" style="margin-top: 11%">
         <div class="row">
-            <div class="col-sm-4 mb-4" th:each="sight : ${sightListModel.sightModel}">
-                <div class="card text-light h-100" th:if="${sight.category.toString().toLowerCase() == category}" style="background-color: #025940">
+            <div class="col-sm-4 mb-4" th:if="${sight.category.toString().toLowerCase() == category}" th:each="sight : ${sightListModel.sightModel}">
+                <div id="cards" class="card text-light h-100" style="background-color: #025940">
                     <img class="card-img-top" th:src="@{/images/__${sight.id}__.jpg}" style="object-fit: cover, width: 100%; height: 15vw;" alt="Card image cap">
                     <div class="card-body">
                         <div class="card-contents" style="height: 200px; overflow: hidden;">
@@ -24,23 +60,97 @@
                         </div>
                         <a sec:authorize="!hasAuthority('ADMIN')" th:href="@{/sight-details(sightId=${sight.id})}" class="btn" style="position: absolute; bottom: 10px; background-color: #04BF8A">Tovább az oldalra</a>
                         <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/sight-details(sightId=${sight.id})}" class="btn" style="position: absolute; bottom: 10px; background-color: #04BF8A">Szerkesztés</a>
-                        <!--ITT BAJOK VANNAK-->
-                        <form th:href="@{/delete-sight}" th:object="${sight}" method="post">
-                                <input type="hidden" th:field="*{id}" th:value="${sight.id}">
-                                <input type="hidden" th:field="*{name}" th:value="${sight.name}">
-                                <input type="hidden" th:field="*{description}" th:value="${sight.description}">
-                                <input type="hidden" th:field="*{address}" th:value="${sight.address}">
-                                <input type="hidden" th:field="*{category}" th:value="${sight.category}">
-                                <input type="hidden" th:field="*{reviewList}" th:value="${sight.reviewList}">
-                            <button sec:authorize="hasAuthority('ADMIN')" type="submit" class="btn" style="position: absolute; bottom: 10px; background-color: red">Törlés</button>
-                        </form>
+                        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/delete-sight(sightId=${sight.id})}"  type="submit" class="btn" style="position: relative; float: right; bottom: -5px; background-color: red">Törlés</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
+
+    <div sec:authorize="hasAuthority('ADMIN')">
+    <span class="bg-success" id="toggle-arrow" th:classappend="${imageError} ? 'bg-danger' : ''">&#9668;</span>
+    <div id="toggle-container" class="toggle-content" style="margin-top: 3%">
+        <form th:action="@{/upload}" method="post" th:object="${sightModel}" enctype="multipart/form-data">
+            <input type="hidden" name="category" th:value="${param.category[0].toUpperCase()}">
+            <h6 class="mt-4">A következő id: [[${nextId}]]</h6>
+            <div class="form-group mt-4">
+                <label for="name">Név</label>
+                <input type="text" id="name" class="form-control" th:field="*{name}" th:classappend="${#fields.hasErrors('name')}? error"/>
+                <span class="text-danger" th:if="${#fields.hasErrors('name')}"
+                      th:errors="*{name}"></span>
+            </div>
+            <div class="form-group d-flex flex-column mt-4 p-0">
+                <label for="description">Leírás</label>
+                <textarea class="form-control mt-2" th:field="*{description}" id="description" style="height: 160px; resize:none"
+                          th:classappend="${#fields.hasErrors('description')}? error"></textarea>
+                <span class="text-danger" th:if="${#fields.hasErrors('description')}"
+                      th:errors="*{description}"></span>
+            </div>
+            <div class="form-group d-flex flex-column mt-4">
+                <label for="address">Cím</label>
+                <input type="text" class="form-control mt-2" th:field="*{address}" id="address" th:classappend="${#fields.hasErrors('address')}? error">
+                <span class="text-danger" th:if="${#fields.hasErrors('address')}"
+                      th:errors="*{address}"></span>
+            </div>
+            <div class="form-group mt-4">
+                <input type="file" class="form-control mt-2" name="images" multiple required th:classappend="${imageError} ? btn-error">
+            </div>
+            <input class="btn mt-5 bg-success text-light" style="float:right" type="submit" value="Hozzáadás">
+        </form>
+    </div>
+    </div>
+
+    <script>
+
+        var toggleArrow = document.getElementById("toggle-arrow");
+        var toggleContainer = document.getElementById("toggle-container");
+        var body = document.body;
+        var container = document.getElementById("all");
+        var c = document.querySelectorAll("#cards");
+
+        if(c.length == 0){
+           toggleArrow.style.top = "22%";
+        }else
+           toggleArrow.style.top = "50%";
+
+        toggleContainer.style.display = "none";
+
+        toggleArrow.addEventListener("click", function() {
+
+            if (toggleContainer.style.display === "none") {
+
+                toggleContainer.style.display = "block";
+                toggleArrow.innerHTML = "&#9658;";
+                toggleArrow.style.marginRight = toggleContainer.offsetWidth - 50 + "px";
+                toggleArrow.style.right = 10 + "px";
+                toggleArrow.style.top = "50%";
+
+                if (all.offsetHeight < toggleContainer.offsetHeight) {
+                    all.style.height = toggleContainer.offsetHeight - 50 + "px";
+                }
+
+            } else {
+
+                toggleContainer.style.display = "none";
+                toggleArrow.style.marginRight = 0 + "px";
+                toggleArrow.innerHTML = "&#9668;";
+
+                if(c.length == 0){
+                    toggleArrow.style.top = "22%";
+                }else
+                    toggleArrow.style.top = "50%";
+
+                container.style.height = "auto";
+
+            }
+
+        });
+    </script>
 
 
 </body>
+
 <footer th:replace="/footer.html :: footer"/>
+
 </html>

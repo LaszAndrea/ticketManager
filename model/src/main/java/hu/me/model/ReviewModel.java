@@ -1,10 +1,9 @@
 package hu.me.model;
 
-import hu.me.domain.Sights;
 import hu.me.domain.User;
 import lombok.Data;
+import hu.me.domain.Sights;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data

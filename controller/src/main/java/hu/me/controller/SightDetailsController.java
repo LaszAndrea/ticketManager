@@ -1,14 +1,11 @@
 package hu.me.controller;
 
-import hu.me.TicketService;
+import hu.me.TicketServiceInterface;
 import hu.me.UserLoginDetailsService;
 import hu.me.domain.Review;
 import hu.me.domain.Sights;
 import hu.me.domain.User;
 import hu.me.model.*;
-import hu.me.repository.ReviewRepository;
-import hu.me.repository.SightRepository;
-import hu.me.repository.UserRepository;
 import hu.me.transformer.ReviewTransformer;
 import hu.me.transformer.SightTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
-public class SightDetails {
-
-    @Autowired
-    private SightRepository sightRepository;
-    @Autowired
-    private ReviewRepository reviewRepository;
-    @Autowired
-    private UserRepository userRepository;
+public class SightDetailsController {
 
     @Autowired
     private SightTransformer sightTransformer;
@@ -37,13 +28,13 @@ public class SightDetails {
     private ReviewTransformer reviewTransformer;
 
     @Autowired
-    private TicketService ticketService;
+    private TicketServiceInterface ticketService;
     @Autowired
     private UserLoginDetailsService userLoginDetailsService;
 
     @ModelAttribute("sight")
     public SightModel createSightModel(ShowSightDetailsModel showSightDetailsModel) {
-        return sightTransformer.transformSightToSightModel(sightRepository.findSightsById(showSightDetailsModel.getSightId()));
+        return sightTransformer.transformSightToSightModel(ticketService.findSightById(showSightDetailsModel.getSightId()));
     }
 
     @ModelAttribute("reviewModel")
@@ -62,7 +53,6 @@ public class SightDetails {
             ticketService.getReviewList();
             Review review = reviewTransformer.transformReviewModelToReview(reviewModel);
             ticketService.addReview(review);
-            //redirectAttributes.addFlashAttribute("successMessage", "Review written successfully");
             result = "redirect:sight-details?sightId=" + sightId;
         }
 
@@ -70,14 +60,14 @@ public class SightDetails {
     }
 
     @PostMapping("/update-details")
-    public String updateSight(@Valid SightModel sightModel, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam("sightId") long sightId) {
+    public String updateSight(@Valid SightModel sightModel, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, @RequestParam("sightId") long sightId) throws IOException {
         String result;
         if (bindingResult.hasErrors()) {
             result = "sights";
         } else {
 
             Sights sight = sightTransformer.transformSightModelToSight(sightModel);
-            sightRepository.save(sight);
+            ticketService.addSight(sight);
 
             result = "redirect:sight-details?sightId=" + sightId;
         }
@@ -87,13 +77,15 @@ public class SightDetails {
 
 
     private void sightSetter(ReviewModel reviewModel, long destId) {
+
         Sights sight =null;
-        List<Sights> sightsList = sightRepository.findAll();
+        List<Sights> sightsList = ticketService.findAllSights();
         for(int i=0; i<sightsList.size(); i++){
             if(sightsList.get(i).getId() == destId)
                 sight = sightsList.get(i);
         }
         reviewModel.setSights(sight);
+
     }
 
     @GetMapping(value="/sight-details", params="sightId")
@@ -103,7 +95,7 @@ public class SightDetails {
         model.addAttribute("newUser", new User());
 
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser")))
-            model.addAttribute("userName", userRepository.findByCredentialsLoginName(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
+            model.addAttribute("userName", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
 
         return "sight-details";
     }

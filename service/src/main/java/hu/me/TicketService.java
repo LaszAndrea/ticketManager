@@ -1,19 +1,28 @@
 package hu.me;
 
-import hu.me.domain.Review;
-import hu.me.domain.Sights;
-import hu.me.domain.User;
-import hu.me.repository.ReviewRepository;
-import hu.me.repository.SightRepository;
-import hu.me.repository.UserRepository;
+import hu.me.domain.*;
+import hu.me.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static hu.me.domain.Category.RESTAURANT;
+import static hu.me.domain.Category.SIGHT;
 
 @Service
 public class TicketService implements TicketServiceInterface {
@@ -25,6 +34,11 @@ public class TicketService implements TicketServiceInterface {
     private SightRepository sightRepository;
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private MovieRepository movieRepository;
+
+    @Autowired
+    private TimesRepository timesRepository;
 
     private List<Sights> sightsList;
     private List<User> userList;
@@ -38,6 +52,14 @@ public class TicketService implements TicketServiceInterface {
     }
     public List<Sights> getSights(){
         return sightRepository.findAll();
+    }
+
+    public List<Movie> getMovies(){
+        return movieRepository.findAll();
+    }
+
+    public List<Time> getTimes(){
+        return timesRepository.findAll();
     }
 
     public List<Review> getReviewList(){
@@ -79,25 +101,12 @@ public class TicketService implements TicketServiceInterface {
 
     public void addSight(Sights sight) {
 
-        /*long currentMax = sightsList.stream()
-                .map(Sights::getId)
-                .max(Long::compare)
-                .orElse(0L);
-        sight.setId(currentMax + 1);*/
+        sight.setId(getMaxSightId()+1);
         sightRepository.save(sight);
 
     }
 
     public void addReview(Review review) {
-
-        /*reviewList = reviewRepository.findAll();
-
-        long currentMax = reviewList.stream()
-                .map(Review::getId)
-                .max(Long::compare)
-                .orElse(0L);
-
-        review.setId(currentMax + 1);*/
 
         reviewRepository.save(review);
 
@@ -124,6 +133,131 @@ public class TicketService implements TicketServiceInterface {
 
     }
 
+    public long getMaxSightId(){
+
+
+        if(sightRepository.findAll().size()>0){
+            long max = sightRepository.findAll().get(0).getId();
+
+            for (Sights sight: sightRepository.findAll()) {
+                if(sight.getId() > max){
+                    max = sight.getId();
+                }
+            }
+
+            return max;
+        }
+
+        return 0;
+
+    }
+
+    public void saveFile(String uploadDir, String fileName,
+                                MultipartFile multipartFile) throws IOException {
+
+        Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ioe) {
+            throw new IOException("Nem lehetett elmenteni a képet: " + fileName, ioe);
+        }
+    }
+
+    public void uploadImages(MultipartFile image1, MultipartFile image2, MultipartFile image3, MultipartFile image4, String[] imageNames) throws IOException {
+
+        String uploadDir = "app/src/main/resources/static/images/";
+
+        saveFile(uploadDir, imageNames[0], image1);
+        saveFile(uploadDir, imageNames[1], image2);
+        saveFile(uploadDir, imageNames[2], image3);
+        saveFile(uploadDir, imageNames[3], image4);
+    }
+
+    public void setCategory(String category, Sights sight) {
+        if(category.equalsIgnoreCase("sight")){
+            sight.setCategory(SIGHT);
+        }else {
+            sight.setCategory(RESTAURANT);
+        }
+    }
+
+    public String[] checkImages(String images[]) {
+        long id = getMaxSightId() + 1;
+
+        String expected_names[] = {
+                id + ".jpg",
+                id + "_1.jpg",
+                id + "_2.jpg",
+                id + "_3.jpg"
+        };
+
+        for (int i = 0; i < expected_names.length; i++) {
+            String expectedName = expected_names[i];
+            String imageName = images[i];
+
+            if (!imageName.equals(expectedName)) {
+                images[i] = expectedName;
+            }
+        }
+
+        return images;
+    }
+
+    public Movie findMovieById(long id){
+        return movieRepository.findMovieById(id);
+    }
+    public Time findTimeById(long id){
+        return timesRepository.findTimeById(id);
+    }
+
+    public Sights findSightById(long id){
+        return sightRepository.findSightsById(id);
+    }
+
+    public void deleteSight(long id){
+        sightRepository.deleteById(id);
+    }
+
+    public List<Sights> findAllSights(){
+        return  sightRepository.findAll();
+    }
+
+    public String dayOfWeek(Time time){
+
+        String dayName = switch (time.getTime_date().getDayOfWeek()) {
+            case MONDAY -> "hétfő";
+            case TUESDAY -> "kedd";
+            case WEDNESDAY -> "szerda";
+            case THURSDAY -> "csütörtök";
+            case FRIDAY -> "péntek";
+            case SATURDAY -> "szombat";
+            case SUNDAY -> "vasárnap";
+        };
+
+        return dayName;
+
+    }
+
+    public Map<String, String> tickets() {
+
+        String types[] = {"Teljesárú jegy", "Diákjegy", "Junior jegy", "Jegy fogyatékkal élők részére", "Senior jegy"};
+        String prices[] = {"1950", "1650", "1650", "1650", "1650"};
+
+        Map<String, String> typePrice = new HashMap<>();
+
+        for (int i=0; i<types.length; i++){
+            typePrice.put(types[i], prices[i]);
+        }
+
+        return typePrice;
+
+    }
 
 
 }

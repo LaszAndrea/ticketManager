@@ -1,5 +1,6 @@
 package hu.me.transformer;
 
+
 import hu.me.domain.Sights;
 import hu.me.model.SightModel;
 import org.springframework.stereotype.Component;

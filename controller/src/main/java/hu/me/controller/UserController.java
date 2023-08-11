@@ -2,6 +2,7 @@ package hu.me.controller;
 
 //import hu.me.UserLoginDetailsService;
 import hu.me.TicketService;
+import hu.me.TicketServiceInterface;
 import hu.me.UserLoginDetailsService;
 import hu.me.domain.Role;
 import hu.me.domain.User;
@@ -21,9 +22,7 @@ import java.security.SecureRandom;
 public class UserController {
 
     @Autowired
-    private TicketService ticketService;
-    @Autowired
-    private UserRepository uRep;
+    private TicketServiceInterface ticketService;
 
     @Autowired
     private UserLoginDetailsService userLoginDetailsService;
@@ -34,7 +33,7 @@ public class UserController {
         model.addAttribute("newUser", new User());
 
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser")))
-            model.addAttribute("userName", uRep.findByCredentialsLoginName(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
+            model.addAttribute("userName", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
 
         return "homepage";
 

@@ -101,24 +101,25 @@
                     </div>
                     <div class="row m-0 pe-1 text-start" th:each="review : ${reviewLatests}" th:if="${review.sight.id} eq ${param.sightId[0]}" >
                         <div class="col-3 m-0 p-2 mt-2"><h6 th:if="${review.user != null}" th:text="${review.user.fullName}">:</h6></div>
-                        <div class="col-6 m-0 p-2 pe-3 mt-2"><p th:text="${review.comment}"></p></div>
+                        <div class="col-6 m-0 p-2 pe-3 mt-2"><p>[[${(review.comment).isEmpty()} ? '-' : ${review.comment}]]</p></div>
                         <div class="col-3 m-0 p-2 ps-0 mt-2 text-center"><p th:text="${review.rating}"></p></div>
                     </div>
                 </div>
             </div>
             <div sec:authorize="hasAuthority('ADMIN')" class="col-3 d-flex flex-column">
                 <div class="p-2 rounded align-self-center" style="width: 100%; height: 100%; border: 1px solid grey; background-color: light-grey" >
-                    <form class="mt-5 align-items-end" id="updateForm" th:action="@{/update-details(sightId=${sight.id})}" th:object="${sight}" method="post">
-                        <div class="d-flex">
-                            <label>Név</label>
-                            <input type="text" th:field="*{name}">
+                    <form class="align-items-end" id="updateForm" th:action="@{/update-details(sightId=${sight.id})}" th:object="${sight}" method="post">
+                        <div class="form-group d-flex flex-column mt-2">
+                            <label for="name">Név</label>
+                            <input type="text" class="form-control mt-2" th:field="*{name}" id="name">
                         </div>
-                        <div class="d-flex mt-0 p-0">
-                            <textarea class="form-control" th:field="*{description}" style="height: 150px; resize:none"></textarea>
+                        <div class="form-group d-flex flex-column mt-3 p-0">
+                            <label for="description">Leírás</label>
+                            <textarea class="form-control mt-2" th:field="*{description}" id="description" style="height: 250px; resize:none"></textarea>
                         </div>
-                        <div class="d-flex">
-                            <label>Cím</label>
-                            <input type="text" th:field="*{address}">
+                        <div class="form-group d-flex flex-column mt-3">
+                            <label for="address">Cím</label>
+                            <input type="text" class="form-control mt-2" th:field="*{address}" id="address">
                         </div>
                         <div class="form-group">
                             <input type="hidden" name="sightId" th:value="${sight.id}">
@@ -126,8 +127,8 @@
                             <input type="hidden" th:field="*{category}" th:value="${sight.category}">
                             <input type="hidden" th:field="*{reviewList}" th:value="${sight.reviewList}">
                         </div>
-                        <div class="d-flex mt-3 p-0">
-                            <button class="btn send mt-1" type="submit">Szerkesztés megerősítése</button>
+                        <div class="form-group d-flex justify-content-start mt-1 p-0">
+                            <button class="btn send mt-3" type="submit">Szerkesztés megerősítése</button>
                         </div>
                     </form>
                 </div>
