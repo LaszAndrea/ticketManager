@@ -76,8 +76,8 @@
                             Szórakozás
                         </a>
                         <ul class="dropdown-menu short" id="showEntertainment">
-                            <li><a class="dropdown-item" th:href="@{/cinemas}">Mozi</a></li>
-                            <li><a class="dropdown-item" href="#theatres.html">Színház</a></li>
+                            <li><a class="dropdown-item" th:href="@{/cinemas?category=cinema}">Mozi</a></li>
+                            <li><a class="dropdown-item" th:href="@{/theatre?category=theatre}">Színház</a></li>
                         </ul>
                     </li>
 
@@ -90,7 +90,7 @@
 
                 <!--Bejelentkezett felhasználó neve-->
                 <div sec:authorize="isAuthenticated()">
-                    <label class="nav-item me-4 text-light hover-underline-animation"  th:text="'Helló, ' + ${userName}" />
+                    <a th:href="@{/user-home-page}"><label class="nav-item me-4 text-light hover-underline-animation"  th:text="'Helló, ' + ${userName}" /></a>
                 </div>
 
                 <!--Kijelentkezés, amennyiben már valaki be van jelentkezve-->

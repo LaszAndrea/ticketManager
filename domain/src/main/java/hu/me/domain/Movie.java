@@ -24,8 +24,8 @@ public class Movie {
     private String description;
     @Enumerated(EnumType.STRING)
     private Genre genre;
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "movies")
-    private List<User> user;
+    /*@ManyToMany(cascade = CascadeType.ALL, mappedBy = "movies")
+    private List<User> user;*/
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "movie")
     private List<Time> times;
 
@@ -69,13 +69,13 @@ public class Movie {
         this.genre = genre;
     }
 
-    public List<User> getUser() {
+    /*public List<User> getUser() {
         return user;
     }
 
     public void setUser(List<User> user) {
         this.user = user;
-    }
+    }*/
 
     public List<Time> getTimes() {
         return times;

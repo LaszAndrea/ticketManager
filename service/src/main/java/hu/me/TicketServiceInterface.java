@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,8 @@ public interface TicketServiceInterface {
     User findUserByUsername(String username);
     void save(User user);
     void addSight(Sights sight);
+    void updateSight(Sights sight);
+
     void addReview(Review review);
     List<Review> findLatests(long sightId);
     long getMaxSightId();
@@ -34,5 +38,11 @@ public interface TicketServiceInterface {
     void deleteSight(long id);
     String dayOfWeek(Time time);
     Map<String, String> tickets();
+    List<Movie> filters(String keyword, LocalDate selectedDate);
+    List<Seat> getSeatsForTime(Time time);
+    //void addMovie(Movie movie, User user);
+    void reservation(Time time, User user);
+    //List<Movie> getMoviesForUser(User user);
 
+    List<Time> getReservationsForUser(User user);
 }

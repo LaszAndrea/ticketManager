@@ -27,12 +27,27 @@ public class User {
     private Credentials credentials;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Review> reviews;
-    @ManyToMany
+    /*@ManyToMany
     @JoinTable(
             name = "_3_Reserved",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "movie_id"))
-    private List<Movie> movies;
+    private List<Movie> movies;*/
+
+    @ManyToMany
+    @JoinTable(
+            name = "_3_Reserved",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "time_id"))
+    private List<Time> reservedTimes;
+
+    public List<Time> getReservedTimes() {
+        return reservedTimes;
+    }
+
+    public void setReservedTimes(List<Time> reservedTimes) {
+        this.reservedTimes = reservedTimes;
+    }
 
     public Long getId() {
         return id;
@@ -66,6 +81,14 @@ public class User {
         this.credentials = credentials;
     }
 
+    /*public List<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+    }*/
+
     public User(long id, String name, Role role, Credentials credentials) {
         this.id = id;
         this.fullName = name;
@@ -78,11 +101,11 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id.equals(user.id) && fullName.equals(user.fullName) && role == user.role && credentials.equals(user.credentials) && reviews.equals(user.reviews) && movies.equals(user.movies);
+        return id.equals(user.id) && fullName.equals(user.fullName) && role == user.role && credentials.equals(user.credentials) && reviews.equals(user.reviews)  /* &&movies.equals(user.movies)*/;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fullName, role, credentials, reviews, movies);
+        return Objects.hash(id, fullName, role, credentials, reviews /*,movies*/);
     }
 }

@@ -13,6 +13,7 @@ import java.sql.Statement;
 public class Main {
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
+
         SpringApplication.run(Main.class, args);
 
         /*Class.forName("org.h2.Driver");
@@ -20,6 +21,10 @@ public class Main {
         Statement stmt = conn.createStatement();
 
         String sql =
+                "INSERT INTO \"PUBLIC\".\"_4_TIME\" VALUES\n" +
+                        "(4, TIMESTAMP '2023-08-18 11:50:30.0', 3);\n" +
+        "INSERT INTO \"PUBLIC\".\"_4_TIME\" VALUES\n" +
+                "(5, TIMESTAMP '2023-08-20 14:40:30.0', 3);\n"; +
                 "INSERT INTO \"PUBLIC\".\"_6_SIGHTS\" VALUES\n" +
                 "(1, '4431 Nyíregyháza, Fürdőház tér 2.', 'SIGHT', 'Az Élményfürdő az év minden napján nyitva tart, a szabadtéri Parkfürdő pedig nyáron várja a látogatókat. A két fürdő különlegessége, hogy szomszédosak egymással, a nyári szezonban egy belépőjeggyel látogathatók, itt minden korosztály megtalálja a számára kellemes kikapcsolódási formát. Páratlan növénykultúrával rendelkező Parkfürdőben az úszás szerelmesei egy fantasztikus versenyuszoda habjait szelhetik.', 'Aquarius Élmény- és Parkfürdő - Nyíregyháza');\n"+
                 "INSERT INTO \"PUBLIC\".\"_1_USERS\" VALUES\n" +
@@ -30,8 +35,6 @@ public class Main {
                 "(1, 12, '1969-et írunk. Indiana Jones úgy dönt, ennyi volt. Miután több mint egy évtizeden át tanított a New York-i Hunter Főiskolán, a neves professzor és régész nyugdíjas éveire készül szerény kis lakásában, ahol egyedül tengeti napjait. ', 'ACTION', 'INDIANA JONES ÉS A SORS TÁRCSÁJA');\n" +
                 "INSERT INTO \"PUBLIC\".\"_3_RESERVED\" VALUES\n" +
                 "(102, 1);\n" +
-                        "INSERT INTO \"PUBLIC\".\"_4_TIME\" VALUES\n" +
-                        "(1, TIMESTAMP '2021-05-01 10:40:30.0', 1);\n" +
                 "INSERT INTO \"PUBLIC\".\"_5_SEAT\" VALUES\n" +
                 "(1, TRUE, 1);\n" +
                 "INSERT INTO \"PUBLIC\".\"_6_SIGHTS\" VALUES\n" +

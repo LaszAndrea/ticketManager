@@ -21,7 +21,7 @@ public class MovieModel {
 
     private Genre genre;
 
-    private List<User> user;
+    //private List<User> user;
 
     private List<Time> times;
 

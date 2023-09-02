@@ -16,7 +16,7 @@ public class Seat {
     private Long id;
     private boolean free;
     @ManyToOne
-    private Time time_date;
+    private Time movieTime;
 
     public Long getId() {
         return id;

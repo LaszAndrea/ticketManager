@@ -24,6 +24,7 @@ public class TimeTransformer {
             timeModel.setTime_date(time.getTime_date());
             timeModel.setMovie(time.getMovie());
             timeModel.setSeats(time.getSeats());
+            timeModel.setUser(time.getUsersThisTime());
             if (time.getId() != null)
                 timeModel.setId(time.getId());
         }
@@ -37,6 +38,7 @@ public class TimeTransformer {
         time.setTime_date(timeModel.getTime_date());
         time.setMovie(timeModel.getMovie());
         time.setSeats(timeModel.getSeats());
+        time.setUsersThisTime(timeModel.getUser());
         return time;
     }
 

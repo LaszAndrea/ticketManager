@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,16 +29,17 @@ public class TicketService implements TicketServiceInterface {
 
     private User loggedInUser;
     @Autowired
-    private UserRepository uRep;
+    private UserRepository userRepository;
     @Autowired
     private SightRepository sightRepository;
     @Autowired
     private ReviewRepository reviewRepository;
     @Autowired
     private MovieRepository movieRepository;
-
     @Autowired
     private TimesRepository timesRepository;
+    @Autowired
+    private SeatRepository seatRepository;
 
     private List<Sights> sightsList;
     private List<User> userList;
@@ -83,7 +84,7 @@ public class TicketService implements TicketServiceInterface {
 
     public User findUserByUsername(String username) {
 
-        userList = uRep.findAll();
+        userList = userRepository.findAll();
 
         return userList.stream()
                 .filter(user -> user.getCredentials().getLoginName().equals(username))
@@ -95,13 +96,19 @@ public class TicketService implements TicketServiceInterface {
         String pw_hash = BCrypt.hashpw(user.getCredentials().getPassword(), BCrypt.gensalt());
         user.getCredentials().setPassword(pw_hash);
 
-        uRep.save(user);
+        userRepository.save(user);
 
     }
 
     public void addSight(Sights sight) {
 
         sight.setId(getMaxSightId()+1);
+        sightRepository.save(sight);
+
+    }
+
+    public void updateSight(Sights sight) {
+
         sightRepository.save(sight);
 
     }
@@ -259,5 +266,53 @@ public class TicketService implements TicketServiceInterface {
 
     }
 
+    public List<Movie> filters(String keyword, LocalDate selectedDate){
+
+        if(keyword!=null) {
+            return movieRepository.findByKeyword(keyword);
+        }
+        else
+            return movieRepository.findAll();
+    }
+
+    public List<Seat> getSeatsForTime(Time time_date){
+        return seatRepository.findByMovieTime(time_date);
+    }
+
+    /*public void addMovie(Movie movie, User user) {
+
+        List<User> usersSeeingMovie = movie.getUser();
+        usersSeeingMovie.add(user);
+        movie.setUser(usersSeeingMovie);
+        movieRepository.save(movie);
+
+        List<Movie> moviesUserSeeing = user.getMovies();
+        moviesUserSeeing.add(movie);
+        user.setMovies(moviesUserSeeing);
+        userRepository.save(user);
+
+    }*/
+
+    public void reservation(Time time, User user){
+
+        List<User> usersSeeingMovieAtTime = time.getUsersThisTime();
+        usersSeeingMovieAtTime.add(user);
+        time.setUsersThisTime(usersSeeingMovieAtTime);
+        timesRepository.save(time);
+
+        List<Time> timesReserved = user.getReservedTimes();
+        timesReserved.add(time);
+        user.setReservedTimes(timesReserved);
+        userRepository.save(user);
+
+    }
+
+    /*public List<Movie> getMoviesForUser(User user){
+        return movieRepository.findMoviesByUser(user);
+    }*/
+
+    public List<Time> getReservationsForUser(User user){
+        return timesRepository.findTimeByUser(user);
+    }
 
 }

@@ -20,3 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 })
+
+/*document.getElementById('selectedDate').addEventListener('change', function() {
+    var selectedDate = this.value;
+
+    // Itt használj AJAX vagy Fetch API-t az adatok elküldéséhez a szervernek
+    // Például Fetch API használata:
+    fetch('/cinemas?selectedDate=' + selectedDate)
+        .then(response => response.text())
+        .then(data => {
+            // Adataidra való frissítés
+            document.getElementById('contentContainer').innerHTML = data;
+        });
+});*/

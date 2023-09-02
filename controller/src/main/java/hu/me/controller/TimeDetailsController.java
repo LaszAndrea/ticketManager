@@ -2,6 +2,7 @@ package hu.me.controller;
 
 import hu.me.TicketServiceInterface;
 import hu.me.UserLoginDetailsService;
+import hu.me.domain.Seat;
 import hu.me.domain.User;
 import hu.me.model.MovieModel;
 import hu.me.model.ShowMovieDetailsModel;
@@ -14,12 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class TimeDetailsController {
@@ -46,15 +46,34 @@ public class TimeDetailsController {
         return timeTransformer.transformTimeToTimeModel(ticketService.findTimeById(showTimeDetailsModel.getTimeId()));
     }
 
-    @GetMapping(value="/time-details", params="timeId")
-    private String showTimeDetails(Model model, @RequestParam("timeId") long timeId, @RequestParam("movieId") long movieId) {
+    @PostMapping("/reservation")
+    public String makeReservation(@RequestParam("timeId") long timeId, @RequestParam("movieId") long movieId){
+
+        User loggedInUser = ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername());
+
+        //elvileg működik
+        //ticketService.addMovie(ticketService.findMovieById(movieId), loggedInUser);
+        ticketService.reservation(ticketService.findTimeById(timeId), loggedInUser);
+        //ticketService.reserveSeats();
+
+        return "redirect:cinemas?category=cinema";
+
+    }
+
+    @GetMapping(value="/time-details")
+    public String showTimeDetails(Model model, @RequestParam("timeId") long timeId, @RequestParam("movieId") long movieId) {
 
         model.addAttribute("typePrice", ticketService.tickets());
         model.addAttribute("day",ticketService.dayOfWeek(ticketService.findTimeById(timeId)));
-        model.addAttribute("newUser", new User());
+        model.addAttribute("seatsWithMovie", ticketService.getSeatsForTime(ticketService.findTimeById(timeId)));
+        model.addAttribute("reserveSeats", new ArrayList<Seat>());
 
-        if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser")))
+        if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser"))) {
+            model.addAttribute("loggedInUser", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()));
             model.addAttribute("userName", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
+        }else{
+            model.addAttribute("newUser", new User());
+        }
 
         return "time-details";
     }

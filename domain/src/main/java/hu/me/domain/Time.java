@@ -19,10 +19,21 @@ public class Time {
     private Long id;
     @Column(nullable = false)
     private LocalDateTime time_date;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "time_date")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "movieTime")
     private List<Seat> seats;
     @ManyToOne
     private Movie movie;
+
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "reservedTimes")
+    private List<User> user;
+
+    public List<User> getUsersThisTime() {
+        return user;
+    }
+
+    public void setUsersThisTime(List<User> usersThisTime) {
+        this.user = usersThisTime;
+    }
 
     public Long getId() {
         return id;

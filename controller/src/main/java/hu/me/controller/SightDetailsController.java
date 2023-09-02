@@ -67,7 +67,7 @@ public class SightDetailsController {
         } else {
 
             Sights sight = sightTransformer.transformSightModelToSight(sightModel);
-            ticketService.addSight(sight);
+            ticketService.updateSight(sight);
 
             result = "redirect:sight-details?sightId=" + sightId;
         }
