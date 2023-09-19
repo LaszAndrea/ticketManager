@@ -4,6 +4,7 @@ package hu.me.controller;
 import hu.me.TicketService;
 import hu.me.TicketServiceInterface;
 import hu.me.UserLoginDetailsService;
+import hu.me.domain.News;
 import hu.me.domain.Role;
 import hu.me.domain.User;
 import hu.me.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.security.SecureRandom;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -30,6 +32,7 @@ public class UserController {
     @GetMapping("/homepage")
     public String basics(Model model) {
 
+        model.addAttribute("newsList", ticketService.scrapeNews());
         model.addAttribute("newUser", new User());
 
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser")))

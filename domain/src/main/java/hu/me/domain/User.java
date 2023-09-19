@@ -20,6 +20,8 @@ public class User {
     private Long id;
     @Column(nullable = false, length = 40)
     private String fullName;
+    @Column(nullable = false, length = 12)
+    private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Role role;
     @Embedded
@@ -40,6 +42,26 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "time_id"))
     private List<Time> reservedTimes;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public List<Time> getReservedTimes() {
         return reservedTimes;

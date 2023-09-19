@@ -2,6 +2,12 @@ package hu.me;
 
 import hu.me.domain.*;
 import hu.me.repository.*;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -91,6 +97,11 @@ public class TicketService implements TicketServiceInterface {
                 .findFirst().orElse(null);
 
     }
+
+    public User findUserById(long userId){
+        return userRepository.findById(userId);
+    }
+
     public void save(User user) {
 
         String pw_hash = BCrypt.hashpw(user.getCredentials().getPassword(), BCrypt.gensalt());
@@ -314,5 +325,51 @@ public class TicketService implements TicketServiceInterface {
     public List<Time> getReservationsForUser(User user){
         return timesRepository.findTimeByUser(user);
     }
+
+    public void updateUserPhoneNumber(User user){
+        userRepository.save(user);
+    }
+
+    public List<News> scrapeNews() {
+        List<News> newsList = new ArrayList<>();
+
+        try (final WebClient webClient = new WebClient()) {
+
+            // Engedélyezzük a JavaScript futtatását, ha szükséges (most pont nem, mert akkor hibákat dob)
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+            webClient.getOptions().setJavaScriptEnabled(false);
+
+            // Oldal letöltése
+            HtmlPage page = webClient.getPage("https://www.nyiregyhaza.hu/category/helyi-hirek");
+
+            // Az oldal tartalma HTML-ként
+            String pageContent = page.asXml();
+
+            // HTML tartalom JSoup segítségével történő elemzése
+            Document document = Jsoup.parse(pageContent);
+
+            // Címek kinyerése
+            Elements titles = document.select(".title a");
+            Elements descriptions = document.select(".description");
+            Elements imagesDiv = document.select(".post-item-image a img");
+            Elements dates = document.select(".post-meta span");
+
+            int db = 0;
+            // Címek kiíratása
+            do {
+                String imageURL = imagesDiv.get(db).attr("data-src");
+                String hrefLink = titles.get(db).attr("href");
+                newsList.add(new News(titles.get(db).text(), descriptions.get(db).text(),
+                        imageURL, dates.get(db).text(), hrefLink));
+                db++;
+            }while(db<12);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return newsList;
+    }
+
 
 }

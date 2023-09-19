@@ -39,6 +39,7 @@ public class HomeController {
     public String register( @RequestHeader("referer") String referer, @Valid @ModelAttribute("newUser") User newUser, BindingResult result, Model model, HttpServletRequest request) throws MalformedURLException {
 
         //newUser.setRole(Role.ADMIN);
+        newUser.setRole(Role.USER);
 
         if(result.hasErrors()){
             result.rejectValue("credentials.loginName", "error.user", "");

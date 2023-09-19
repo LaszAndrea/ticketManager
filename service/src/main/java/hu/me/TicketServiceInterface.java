@@ -20,6 +20,7 @@ public interface TicketServiceInterface {
     List<Review> getReviewList();
     List<Review> getReviewsBySightId(long sightId);
     User findUserByUsername(String username);
+    User findUserById(long userId);
     void save(User user);
     void addSight(Sights sight);
     void updateSight(Sights sight);
@@ -43,6 +44,7 @@ public interface TicketServiceInterface {
     //void addMovie(Movie movie, User user);
     void reservation(Time time, User user);
     //List<Movie> getMoviesForUser(User user);
-
     List<Time> getReservationsForUser(User user);
+    void updateUserPhoneNumber(User user);
+    List<News> scrapeNews();
 }
