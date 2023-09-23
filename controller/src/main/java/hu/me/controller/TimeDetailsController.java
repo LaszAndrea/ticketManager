@@ -46,20 +46,6 @@ public class TimeDetailsController {
         return timeTransformer.transformTimeToTimeModel(ticketService.findTimeById(showTimeDetailsModel.getTimeId()));
     }
 
-    @PostMapping("/reservation")
-    public String makeReservation(@RequestParam("timeId") long timeId, @RequestParam("movieId") long movieId){
-
-        User loggedInUser = ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername());
-
-        //elvileg működik
-        //ticketService.addMovie(ticketService.findMovieById(movieId), loggedInUser);
-        ticketService.reservation(ticketService.findTimeById(timeId), loggedInUser);
-        //ticketService.reserveSeats();
-
-        return "redirect:cinemas?category=cinema";
-
-    }
-
     @GetMapping(value="/time-details")
     public String showTimeDetails(Model model, @RequestParam("timeId") long timeId, @RequestParam("movieId") long movieId) {
 
