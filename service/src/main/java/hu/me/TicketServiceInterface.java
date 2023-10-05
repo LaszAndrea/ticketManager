@@ -30,6 +30,7 @@ public interface TicketServiceInterface {
 
     User findUserByUsername(String username);
 
+
     User findUserById(long userId);
 
     void save(User user);
@@ -78,7 +79,15 @@ public interface TicketServiceInterface {
 
     void updateUserPhoneNumber(User user);
 
-    List<News> scrapeNews();
+    List<News> gatherNews();
 
     byte[] generateQRCodeBytes(String data) throws WriterException, IOException;
-}
+
+    List<Review> getUserReviews(User user);
+
+    boolean isEmailValid(String email);
+    boolean isEmailUnique(String email);
+
+    boolean isPhoneNumberUnique(String phone);
+
+    }

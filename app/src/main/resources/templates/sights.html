@@ -22,7 +22,7 @@
         .toggle-content {
             display: none;
             right: 0;
-            top:50%;
+            top:21.6em;
             transform: translateY(-50%);
             position: fixed;
             background-color: #f1f1f1;
@@ -36,7 +36,7 @@
             cursor: pointer;
             position: fixed;
             right: 1%;
-            top: 22%;
+            top: 20em;
             transform: translateY(-50%);
             background-color: #5cb85c;
             color: #fff;
@@ -110,9 +110,9 @@
         var c = document.querySelectorAll("#cards");
 
         if(c.length == 0){
-           toggleArrow.style.top = "22%";
+           toggleArrow.style.top = "8em";
         }else
-           toggleArrow.style.top = "50%";
+           toggleArrow.style.top = "28em";
 
         toggleContainer.style.display = "none";
 
@@ -124,7 +124,7 @@
                 toggleArrow.innerHTML = "&#9658;";
                 toggleArrow.style.marginRight = toggleContainer.offsetWidth - 50 + "px";
                 toggleArrow.style.right = 10 + "px";
-                toggleArrow.style.top = "50%";
+                toggleArrow.style.top = "28em";
 
                 if (all.offsetHeight < toggleContainer.offsetHeight) {
                     all.style.height = toggleContainer.offsetHeight - 50 + "px";
@@ -137,9 +137,9 @@
                 toggleArrow.innerHTML = "&#9668;";
 
                 if(c.length == 0){
-                    toggleArrow.style.top = "22%";
+                    toggleArrow.style.top = "8em";
                 }else
-                    toggleArrow.style.top = "50%";
+                    toggleArrow.style.top = "28em";
 
                 container.style.height = "auto";
 

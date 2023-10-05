@@ -156,7 +156,7 @@
                 <div class="row mt-5">
                     <div class="col-md-3"><a class="btn nextBtn" onclick="prev('#seats', '#data', 'second', 'third')">Vissza</a></button></div>
                     <div class="col-md-6"></div>
-                    <div class="col-md-3"><a class="btn nextBtn" style="float:right" onclick="next('#data', '#confirm', 'third', 'fourth'); getFormData()">Tovább</a></div>
+                    <div class="col-md-3"><a class="btn nextBtn" style="float:right" onclick="next('#data', '#confirm', 'third', 'fourth'); getFormData(); getSelectedSeats()">Tovább</a></div>
                 </div>
             </div>
             <!--Megadott adatok mutatása és a foglalás elküldése-->
@@ -209,6 +209,21 @@
 
     }
 
+    function getSelectedSeats(){
+
+        var selectedSeats = document.querySelectorAll('.chosen');
+
+        for(let i = 0; i<selectedSeats.length; i++){
+            if(selectedSeats.length=1){
+                document.getElementById("chosenSeats").innerHTML = document.getElementById("chosenSeats").innerHTML;
+            }
+            else{
+                document.getElementById("chosenSeats").innerHTML = document.getElementById("chosenSeats").innerHTML + selectedSeats[i].innerHTML + " ";
+            }
+        }
+
+    }
+
     function minusSeat(btnNumber){
 
         var btn = document.getElementById(btnNumber);
@@ -227,9 +242,6 @@
         }else{
             element.innerHTML = "Az összes ülőhely ki lett választva";
         }
-
-
-
 
     }
 

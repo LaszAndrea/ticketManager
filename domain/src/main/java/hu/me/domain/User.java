@@ -1,5 +1,6 @@
 package hu.me.domain;
 
+import hu.me.validator.UniquePhone;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,7 @@ public class User {
     @Column(nullable = false, length = 40)
     private String fullName;
     @Column(nullable = false, length = 12)
+    @UniquePhone
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Role role;

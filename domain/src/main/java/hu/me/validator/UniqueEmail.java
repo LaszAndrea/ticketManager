@@ -1,4 +1,4 @@
-package hu.me;
+package hu.me.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueEmail {
 
-    String message() default "Ez az email cím már regisztrálva van.";
+    String message() default "Ez az email cím már regisztrálva van, vagy nem megfelelő.";
 
     Class<?>[] groups() default {};
 

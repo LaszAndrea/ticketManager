@@ -1,13 +1,9 @@
 package hu.me.transformer;
 
-import hu.me.domain.Movie;
 import hu.me.domain.User;
-import hu.me.model.MovieModel;
 import hu.me.model.UserModel;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class UserTransformer {

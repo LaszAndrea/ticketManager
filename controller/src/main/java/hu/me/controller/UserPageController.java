@@ -1,5 +1,6 @@
 package hu.me.controller;
 
+import hu.me.Statistics;
 import hu.me.TicketServiceInterface;
 import hu.me.UserLoginDetailsService;
 import hu.me.domain.Sights;
@@ -31,12 +32,11 @@ public class UserPageController {
     @GetMapping("/user-home-page")
     public String showUserInfos(Model model){
 
-        //model.addAttribute("userMovies", ticketService.getMoviesForUser(ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername())));
-
         model.addAttribute("userReservations", ticketService.getReservationsForUser(ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername())));
-        System.out.print("/n" + ticketService.getReservationsForUser(ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername())).size());
 
-        //System.out.print(ticketService.getMoviesForUser(ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername())).size());
+        Statistics st = new Statistics(ticketService.getReservationsForUser(ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername())).size(),
+                ticketService.getUserReviews(ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername())).size());
+        model.addAttribute("stat", st);
 
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser"))) {
             model.addAttribute("loggedInUser", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()));

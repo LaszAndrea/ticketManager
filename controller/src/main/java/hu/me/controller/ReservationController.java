@@ -35,7 +35,37 @@ public class ReservationController {
 
         try {
 
-            byte[] qrCodeImageBytes = ticketService.generateQRCodeBytes("" + timeId + " " + movieId);
+            byte[] qrCodeImageBytes = ticketService.generateQRCodeBytes("Foglaló személy neve: " + loggedInUser.getFullName() + "\nElőadás címe: "
+                    + ticketService.findMovieById(movieId).getName() +"\nFoglalt időpont: " + ticketService.findTimeById(timeId).getTime_date());
+            model.addAttribute("qrCodeImage", Base64.getEncoder().encodeToString(qrCodeImageBytes));
+
+        } catch (WriterException | IOException e) {
+            e.printStackTrace();
+        }
+
+        if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser"))) {
+            System.out.print("\n" + userLoginDetailsService.loadAuthenticatedUsername());
+            model.addAttribute("loggedInUser", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()));
+            model.addAttribute("userName", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
+        }
+
+        return "reservation";
+    }
+
+    @GetMapping("/reservation")
+    public String showQrCode(@RequestParam("timeId") long timeId, @RequestParam("movieId") long movieId, Model model) throws WriterException, IOException {
+
+        User loggedInUser = ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername());
+
+        //elvileg működik
+        //ticketService.addMovie(ticketService.findMovieById(movieId), loggedInUser);
+        //ticketService.reservation(ticketService.findTimeById(timeId), loggedInUser);
+        //ticketService.reserveSeats();
+
+        try {
+
+            byte[] qrCodeImageBytes = ticketService.generateQRCodeBytes("Foglaló személy neve: " + loggedInUser.getFullName() + "\nElőadás címe: "
+                    + ticketService.findMovieById(movieId).getName() +"\nFoglalt időpont: " + ticketService.findTimeById(timeId).getTime_date());
             model.addAttribute("qrCodeImage", Base64.getEncoder().encodeToString(qrCodeImageBytes));
 
         } catch (WriterException | IOException e) {
@@ -53,3 +83,4 @@ public class ReservationController {
 
 
 }
+

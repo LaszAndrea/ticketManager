@@ -327,10 +327,6 @@ public class TicketService implements TicketServiceInterface {
 
     }
 
-    /*public List<Movie> getMoviesForUser(User user){
-        return movieRepository.findMoviesByUser(user);
-    }*/
-
     public List<Time> getReservationsForUser(User user){
         return timesRepository.findTimeByUser(user);
     }
@@ -339,7 +335,7 @@ public class TicketService implements TicketServiceInterface {
         userRepository.save(user);
     }
 
-    public List<News> scrapeNews() {
+    public List<News> gatherNews() {
         List<News> newsList = new ArrayList<>();
 
         try (final WebClient webClient = new WebClient()) {
@@ -358,20 +354,37 @@ public class TicketService implements TicketServiceInterface {
             Document document = Jsoup.parse(pageContent);
 
             // Címek kinyerése
-            Elements titles = document.select(".title a");
+            Elements titles = document.select(".post-item .hide-on-480 .title a");
             Elements descriptions = document.select(".description");
-            Elements imagesDiv = document.select(".post-item-image a img");
+            Elements imagesDiv = document.select(".post-item .hide-on-480 .post-item-image a img");
             Elements dates = document.select(".post-meta span");
 
-            int db = 0;
+            int indicator = 0;
             // Címek kiíratása
             do {
-                String imageURL = imagesDiv.get(db).attr("data-src");
-                String hrefLink = titles.get(db).attr("href");
-                newsList.add(new News(titles.get(db).text(), descriptions.get(db).text(),
-                        imageURL, dates.get(db).text(), hrefLink));
-                db++;
-            }while(db<12);
+
+                boolean flag = false;
+                String imageURL = imagesDiv.get(indicator).attr("data-src");
+                String hrefLink = titles.get(indicator).attr("href");
+                News news = new News(titles.get(indicator).text(), descriptions.get(indicator).text(),
+                        imageURL, dates.get(indicator).text(), hrefLink);
+
+                if(indicator >0 && newsList.size()<12) {
+                    for (int i = 0; i<newsList.size(); i++) {
+                        if (newsList.get(i).getName().equalsIgnoreCase(news.getName())) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(!flag){
+                    newsList.add(news);
+                }
+
+                indicator++;
+
+            }while(newsList.size()<12);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -388,6 +401,54 @@ public class TicketService implements TicketServiceInterface {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);
         return outputStream.toByteArray();
+    }
+
+    public List<Review> getUserReviews(User user){
+        return reviewRepository.findByUser(user);
+    }
+
+    public boolean isEmailUnique(String email) {
+        User givenUser = userRepository.findByCredentialsLoginName(email);
+        User user;
+
+        if(givenUser!=null) {
+            user = userRepository.findByCredentialsLoginName(givenUser.getCredentials().getLoginName());
+            return user == null;
+        }else
+            return true;
+
+    }
+
+    public boolean isEmailValid(String email) {
+        String[] kukac = null;
+
+        if(email.contains("@")) {
+
+            kukac = email.split("@");
+
+            if (!kukac[1].equalsIgnoreCase("gmail.com") && !kukac[1].equalsIgnoreCase("freemail.hu") &&
+                    !kukac[1].equalsIgnoreCase("gmail.hu") && !kukac[1].equalsIgnoreCase("student.uni-miskolc.hu")
+                    && !kukac[1].equalsIgnoreCase("citromail.hu") && !kukac[1].equalsIgnoreCase("yahoo.com")) {
+
+                return false;
+            }else {
+                return true;
+            }
+        }else
+            return false;
+
+    }
+
+    public boolean isPhoneNumberUnique(String phone) {
+        User givenUser = userRepository.findByPhoneNumber(phone);
+        User user;
+
+        if(givenUser!=null) {
+            user = userRepository.findByPhoneNumber(givenUser.getPhoneNumber());
+            return user == null;
+        }else
+            return true;
+
     }
 
 

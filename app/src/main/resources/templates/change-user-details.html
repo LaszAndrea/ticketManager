@@ -27,24 +27,29 @@
     </style>
 
     <div class="mx-auto p-5 rounded align-self-center" style="width: 80%; height: 100%; border: 1px solid grey; background-color: light-grey; margin-top: 10%; margin-bottom: 5%" >
-        <form id="updateForm" th:action="@{/change-user-details(userId=${loggedInUser.id})}" th:object="${userModel}" method="post">
-            <div class="form-group d-flex flex-column mt-2">
+        <form th:action="@{/change-user-details(userId=${loggedInUser.id}, change=${param.change[0]})}" th:object="${userModel}" method="post">
+            <div th:if="${param.change[0] eq 'name'}" class="form-group d-flex flex-column mt-2">
                 <label for="name">Teljes név</label>
                 <input type="text" class="form-control mt-2" th:field="*{fullName}" id="name">
             </div>
-            <div class="form-group d-flex flex-column mt-3">
+            <div th:if="${param.change[0] eq 'phone'}" class="form-group d-flex flex-column mt-3">
                 <label for="phone">Telefonszám</label>
                 <input type="tel" class="form-control mt-2" th:field="*{phoneNumber}" id="phone">
+                <span class="text-danger" th:errorclass="error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">Kaka</span>
             </div>
-            <div class="form-group">
-                <input type="hidden" name="userId" th:value="${userModel.id}">
-                <input type="hidden" th:field="*{id}" th:value="${userModel.id}">
+            <div th:if="${param.change[0] eq 'email'}" class="form-group d-flex flex-column mt-3">
+                <label for="email">Email-cím</label>
+                <input type="email" class="form-control mt-2" th:field="*{credentials.loginName}" id="email">
+                <span class="text-danger" th:errorclass="error" th:if="${#fields.hasErrors('credentials.loginName')}" th:errors="*{credentials.loginName}"></span>
+            </div>
+            <!--<div class="form-group">
+                <input type="hidden" name="userId" th:value="${loggedInUser.id}">
+                <input type="hidden" th:field="*{id}" th:value="${loggedInUser.id}">
                 <input type="hidden" th:field="*{role}" th:value="${userModel.role}">
-                <input type="hidden" th:field="*{credentials.loginName}" th:value="${userModel.credentials.loginName}">
                 <input type="hidden" th:field="*{credentials.password}" th:value="${userModel.credentials.password}">
                 <input type="hidden" th:field="*{reservedTimes}" th:value="${userModel.reservedTimes}">
                 <input type="hidden" th:field="*{reviews}" th:value="${userModel.reviews}">
-            </div>
+            </div>-->
             <div class="form-group d-flex mt-3 p-0 justify-content-between">
                 <a th:href="@{/user-home-page}" class="btn send mt-3" style="background-color: #04BF8A">Vissza</a>
                 <button class="btn send mt-3" type="submit">Szerkesztés megerősítése</button>

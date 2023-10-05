@@ -1,9 +1,8 @@
 package hu.me.domain;
 
-import hu.me.UniqueEmail;
+import hu.me.validator.UniqueEmail;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping("/homepage")
     public String basics(Model model) {
 
-        model.addAttribute("newsList", ticketService.scrapeNews());
+        model.addAttribute("newsList", ticketService.gatherNews());
         model.addAttribute("newUser", new User());
 
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser")))

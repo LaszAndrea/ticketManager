@@ -52,7 +52,7 @@ public class TimeDetailsController {
         model.addAttribute("typePrice", ticketService.tickets());
         model.addAttribute("day",ticketService.dayOfWeek(ticketService.findTimeById(timeId)));
         model.addAttribute("seatsWithMovie", ticketService.getSeatsForTime(ticketService.findTimeById(timeId)));
-        model.addAttribute("reserveSeats", new ArrayList<Seat>());
+        model.addAttribute("reservedSeats", new ArrayList<Seat>());
 
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser"))) {
             model.addAttribute("loggedInUser", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()));

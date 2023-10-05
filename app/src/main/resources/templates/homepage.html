@@ -14,10 +14,10 @@
                     <div id="cards" class="card text-light h-100" style="background-color: #025940">
                         <img class="card-img-top" th:src="${news.pictureURL}" style="object-fit: cover, width: 100%; height: 15vw;" alt="Card image cap">
                         <div class="card-body">
-                            <div class="card-contents" style="height: 200px; overflow: hidden;">
+                            <div class="card-contents" style="height: 250px; overflow: hidden;">
                                 <h5 class="card-title" th:text="${news.name}"></h5>
                                 <h6 class="card-subtitle mb-2 text-white-50" th:text="${news.date}"></h6>
-                                <p class="card-text" th:text="${#strings.substringBefore(news.description, '.')}"></p>
+                                <p class="card-text" th:text="${#strings.length(news.description) > 120 ? #strings.substring(news.description, 0, 120) + '...' : news.description}"></p>
                             </div>
                             <a sec:authorize="!hasAuthority('ADMIN')" th:href="${news.hrefLink}" class="btn" style="position: absolute; bottom: 10px; background-color: #04BF8A">Tovább az oldalra</a>
                         </div>
