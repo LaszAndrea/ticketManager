@@ -14,20 +14,29 @@ import java.util.List;
 public class Movie {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String name;
-    @Column(nullable = true, length = 2)
+    @Column(nullable = false, length = 2)
     private int age;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1500)
     private String description;
     @Enumerated(EnumType.STRING)
     private Genre genre;
-    /*@ManyToMany(cascade = CascadeType.ALL, mappedBy = "movies")
-    private List<User> user;*/
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "movie")
     private List<Time> times;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     public Long getId() {
         return id;
@@ -68,14 +77,6 @@ public class Movie {
     public void setGenre(Genre genre) {
         this.genre = genre;
     }
-
-    /*public List<User> getUser() {
-        return user;
-    }
-
-    public void setUser(List<User> user) {
-        this.user = user;
-    }*/
 
     public List<Time> getTimes() {
         return times;

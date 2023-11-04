@@ -65,12 +65,6 @@ public class SightController {
                                     @RequestParam("images") MultipartFile[] images,
                                     Model model) throws IOException {
 
-        String imageNames[] = {
-                StringUtils.cleanPath(images[0].getOriginalFilename()),
-                StringUtils.cleanPath(images[1].getOriginalFilename()),
-                StringUtils.cleanPath(images[2].getOriginalFilename()),
-                StringUtils.cleanPath(images[3].getOriginalFilename())
-        };
 
         if (bindingResult.hasErrors()) {
 
@@ -84,6 +78,13 @@ public class SightController {
             return "sights";
 
         }else {
+
+            String imageNames[] = {
+                    StringUtils.cleanPath(images[0].getOriginalFilename()),
+                    StringUtils.cleanPath(images[1].getOriginalFilename()),
+                    StringUtils.cleanPath(images[2].getOriginalFilename()),
+                    StringUtils.cleanPath(images[3].getOriginalFilename())
+            };
 
             ticketService.uploadImages(images[0], images[1], images[2], images[3], ticketService.checkImages(imageNames));
             ticketService.addSight(sightTransformer.transformSightModelToSight(sightModel));

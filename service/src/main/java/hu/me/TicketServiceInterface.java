@@ -67,7 +67,7 @@ public interface TicketServiceInterface {
 
     Map<String, String> tickets();
 
-    List<Movie> filters(String keyword, LocalDate selectedDate);
+    List<Movie> filters(String keyword, String selectedDate, String genre);
 
     List<Seat> getSeatsForTime(Time time);
 
@@ -85,9 +85,27 @@ public interface TicketServiceInterface {
 
     List<Review> getUserReviews(User user);
 
-    boolean isEmailValid(String email);
-    boolean isEmailUnique(String email);
+    void getRandomSeats(long timeId);
 
-    boolean isPhoneNumberUnique(String phone);
+    long getMaxSeatId();
 
-    }
+    List<Time> filterTimes(String date);
+
+    void reserveSeats(String[] seatArray);
+
+    long getMaxMovieId();
+
+    void addMovieToRepository(Movie movie);
+    long getMaxTimeId();
+
+    void addTimeToRepository(Time time);
+
+    void checkMovieImages(MultipartFile image1, String imageName) throws IOException;
+
+    void changeMovieDetails(Movie movie);
+
+    void changeTimeDetails(Time time);
+
+    void deleteMovie(Movie movie);
+
+}

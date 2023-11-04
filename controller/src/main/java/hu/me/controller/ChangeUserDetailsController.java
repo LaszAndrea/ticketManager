@@ -10,6 +10,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import hu.me.TicketServiceInterface;
 import hu.me.UserLoginDetailsService;
+import hu.me.domain.Credentials;
 import hu.me.domain.User;
 import hu.me.model.ShowUserDetailsModel;
 import hu.me.model.SightModel;
@@ -54,73 +55,97 @@ public class ChangeUserDetailsController {
     @Autowired
     private UserTransformer userTransformer;
 
-    /*@ModelAttribute("userModel")
-    public UserModel createUserModel(ShowUserDetailsModel showUserDetailsModel) {
-        return userTransformer.transformUserToUserModel(ticketService.findUserById(showUserDetailsModel.getUserId()));
-    }*/
-
     @ModelAttribute("userModel")
-    public UserModel createUserModel(ShowUserDetailsModel showUserDetailsModel) {
+    public UserModel createUserModel() {
         return new UserModel();
     }
 
-    @PostMapping("/change-user-details")
-    public String changeUserDetails(UserModel userModel, @ModelAttribute("changing") String changing, BindingResult bindingResult, @RequestParam("userId") long userId,@RequestParam("change") String change, Model model) throws IOException {
+    @PostMapping("/change-user-phone")
+    public String changeUserPhone(@Valid UserModel userModel, BindingResult bindingResult,
+                                  @RequestParam("userId") long userId, Model model){
 
-        if(change.equalsIgnoreCase("phone") &&
-                !ticketService.isPhoneNumberUnique(userModel.getPhoneNumber())){
-
-            System.out.println(userModel.getPhoneNumber());
-            bindingResult.rejectValue(null, "error.user.phoneNumber", "HIBAÜZENET");
-            //bindingResult.rejectValue("phoneNumber", "error.user.phoneNumber", "HIBAÜZENET");
-
-            model.addAttribute("loggedInUser", ticketService.findUserById(userId));
-            model.addAttribute("userName", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
-
-            return "change-user-details";
-        }else if(change.equalsIgnoreCase("email") && (!ticketService.isEmailValid(userModel.getCredentials().getLoginName())
-            || !ticketService.isEmailUnique(userModel.getCredentials().getLoginName()))){
-
-            bindingResult.rejectValue( "loginName", "error.credentials.loginName");
-
-            model.addAttribute("loggedInUser", ticketService.findUserById(userId));
-            model.addAttribute("userName", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
-
-            return "change-user-details";
-
-        } else {
+        if(bindingResult.hasFieldErrors("phoneNumber")){
+            bindingResult.rejectValue("phoneNumber", "error.user", "");
+            addModelAttributes(model);
+            return "change-user-phone";
+        }else{
 
             User user = ticketService.findUserById(userId);
-
-            if(change.equalsIgnoreCase("name")) {
-                user.setFullName(userModel.getFullName());
-            }else if(change.equalsIgnoreCase("phone")){
-                user.setPhoneNumber(userModel.getPhoneNumber());
-            }else if(change.equalsIgnoreCase("email")){
-                user.getCredentials().setLoginName(userModel.getCredentials().getLoginName());
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                Authentication newAuthentication = new UsernamePasswordAuthenticationToken(user.getCredentials().getLoginName(), authentication.getCredentials(), authentication.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-            }
+            user.setPhoneNumber(userModel.getPhoneNumber());
 
             ticketService.save(user);
-            System.out.println(user.getFullName() + " " + user.getPhoneNumber() + " " +user.getCredentials().getLoginName());
 
             return "redirect:user-home-page";
+
         }
 
     }
 
-    @GetMapping("/change-user-details")
-    public String showChangeDetails(Model model){
+    @PostMapping("/change-user-email")
+    public String changeUserEmail(@Valid UserModel userModel, BindingResult bindingResult, @RequestParam("userId") long userId, Model model){
 
-        model.addAttribute("changing", "");
+        if(bindingResult.hasFieldErrors("credentials.loginName")){
+            bindingResult.rejectValue("credentials.loginName", "error.user", "");
+            addModelAttributes(model);
+            return "change-user-email";
+        }else{
 
+            User user = ticketService.findUserById(userId);
+            user.getCredentials().setLoginName(userModel.getCredentials().getLoginName());
+
+            Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+            Authentication newEmailAuth = new UsernamePasswordAuthenticationToken(user.getCredentials().getLoginName(), currentAuth.getCredentials(), currentAuth.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(newEmailAuth);
+
+            ticketService.save(user);
+
+            return "redirect:user-home-page";
+
+        }
+
+    }
+
+    @PostMapping("/change-user-name")
+    public String changeUserName(@Valid UserModel userModel, BindingResult bindingResult, @RequestParam("userId") long userId, Model model){
+
+        if(bindingResult.hasFieldErrors("fullName")){
+            bindingResult.rejectValue("fullName", "error.user", "");
+            addModelAttributes(model);
+            return "change-user-name";
+        }else{
+
+            User user = ticketService.findUserById(userId);
+            user.setFullName(userModel.getFullName());
+            ticketService.save(user);
+
+            return "redirect:user-home-page";
+
+        }
+
+    }
+
+    @GetMapping("/change-user-phone")
+    public String showChangeDetailsPhone(Model model){
+        addModelAttributes(model);
+        return "change-user-phone";
+    }
+
+    @GetMapping("/change-user-name")
+    public String showChangeDetailsName(Model model){
+        addModelAttributes(model);
+        return "change-user-name";
+    }
+
+    @GetMapping("/change-user-email")
+    public String showChangeDetailsEmail(Model model){
+        addModelAttributes(model);
+        return "change-user-email";
+    }
+
+    private void addModelAttributes(Model model) {
         if (!(userLoginDetailsService.loadAuthenticatedUsername().equalsIgnoreCase("anonymousUser"))) {
             model.addAttribute("loggedInUser", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()));
             model.addAttribute("userName", ticketService.findUserByUsername(userLoginDetailsService.loadAuthenticatedUsername()).getFullName());
         }
-
-        return "change-user-details";
     }
 }

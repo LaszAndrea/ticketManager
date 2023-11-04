@@ -15,60 +15,16 @@ public class Sights {
     @Id
     //@GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
-    @Column(nullable = false, length = 60)
-    private String name;
-    @Column(nullable = false, length = 1000)
-    private String description;
     @Column(nullable = false, length = 100)
+    private String name;
+    @Column(nullable = false, length = 1500)
+    private String description;
+    @Column(nullable = false, length = 200)
     private String address;
     @Enumerated(EnumType.STRING)
     private Category category;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sight")
     private List<Review> reviews;
-
-/*@Column(name = "first_pic")
-    private String firstPic;
-
-    @Column(name = "second_pic")
-    private String secondPic;
-
-    @Column(name = "third_pic")
-    private String thirdPic;
-
-    @Column(name = "fourth_pic")
-    private String fourthPic;
-
-    public String getFirstPic() {
-        return firstPic;
-    }
-
-    public void setFirstPic(String firstPic) {
-        this.firstPic = firstPic;
-    }
-
-    public String getSecondPic() {
-        return secondPic;
-    }
-
-    public void setSecondPic(String secondPic) {
-        this.secondPic = secondPic;
-    }
-
-    public String getThirdPic() {
-        return thirdPic;
-    }
-
-    public void setThirdPic(String thirdPic) {
-        this.thirdPic = thirdPic;
-    }
-
-    public String getFourthPic() {
-        return fourthPic;
-    }
-
-    public void setFourthPic(String fourthPic) {
-        this.fourthPic = fourthPic;
-    }*/
 
     public Long getId() {
         return id;

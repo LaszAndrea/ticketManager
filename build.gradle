@@ -45,6 +45,9 @@ subprojects {
 		implementation 'com.google.zxing:javase:3.4.1'
 
 		implementation 'org.htmlunit:htmlunit:3.5.0'
+
+		implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13'
+
 	}
 
 }

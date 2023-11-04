@@ -29,10 +29,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -286,32 +285,53 @@ public class TicketService implements TicketServiceInterface {
 
     }
 
-    public List<Movie> filters(String keyword, LocalDate selectedDate){
+    public List<Movie> filters(String keyword, String date, String genre){
 
-        if(keyword!=null) {
-            return movieRepository.findByKeyword(keyword);
+        List<Movie> movies = movieRepository.findAll();
+        List<Movie> filteredMovies = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dateParsed = LocalDate.parse(date, formatter);
+
+        for(int i=0; i<movies.size(); i++){
+            for(int j=0; j<movies.get(i).getTimes().size(); j++){
+                if(LocalDate.parse(movies.get(i).getTimes().get(j).getTime_date().toString().substring(0,10), formatter).equals(dateParsed)){
+                    if (keyword == null || keyword.isEmpty() || movies.get(i).getName().toLowerCase().contains(keyword.toLowerCase())) {
+                        if(genre.equalsIgnoreCase("összes") || movies.get(i).getGenre().toString().equalsIgnoreCase(genre)) {
+                            filteredMovies.add(movies.get(i));
+                            break;
+                        }
+                    }
+                }
+            }
         }
-        else
-            return movieRepository.findAll();
+
+        return filteredMovies;
+
     }
+
+    public List<Time> filterTimes(String date){
+
+        List<Time> times = timesRepository.findAll();
+        List<Time> filteredTimes = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dateParsed = LocalDate.parse(date, formatter);
+
+        for(int i=0; i<times.size(); i++){
+                if(LocalDate.parse(times.get(i).getTime_date().toString().substring(0,10), formatter).equals(dateParsed)) {
+                    filteredTimes.add(times.get(i));
+                }
+        }
+
+        return filteredTimes;
+
+    }
+
 
     public List<Seat> getSeatsForTime(Time time_date){
         return seatRepository.findByMovieTime(time_date);
     }
-
-    /*public void addMovie(Movie movie, User user) {
-
-        List<User> usersSeeingMovie = movie.getUser();
-        usersSeeingMovie.add(user);
-        movie.setUser(usersSeeingMovie);
-        movieRepository.save(movie);
-
-        List<Movie> moviesUserSeeing = user.getMovies();
-        moviesUserSeeing.add(movie);
-        user.setMovies(moviesUserSeeing);
-        userRepository.save(user);
-
-    }*/
 
     public void reservation(Time time, User user){
 
@@ -340,27 +360,21 @@ public class TicketService implements TicketServiceInterface {
 
         try (final WebClient webClient = new WebClient()) {
 
-            // Engedélyezzük a JavaScript futtatását, ha szükséges (most pont nem, mert akkor hibákat dob)
             webClient.getOptions().setThrowExceptionOnScriptError(false);
             webClient.getOptions().setJavaScriptEnabled(false);
 
-            // Oldal letöltése
             HtmlPage page = webClient.getPage("https://www.nyiregyhaza.hu/category/helyi-hirek");
 
-            // Az oldal tartalma HTML-ként
             String pageContent = page.asXml();
 
-            // HTML tartalom JSoup segítségével történő elemzése
             Document document = Jsoup.parse(pageContent);
 
-            // Címek kinyerése
             Elements titles = document.select(".post-item .hide-on-480 .title a");
             Elements descriptions = document.select(".description");
             Elements imagesDiv = document.select(".post-item .hide-on-480 .post-item-image a img");
             Elements dates = document.select(".post-meta span");
 
             int indicator = 0;
-            // Címek kiíratása
             do {
 
                 boolean flag = false;
@@ -407,49 +421,131 @@ public class TicketService implements TicketServiceInterface {
         return reviewRepository.findByUser(user);
     }
 
-    public boolean isEmailUnique(String email) {
-        User givenUser = userRepository.findByCredentialsLoginName(email);
-        User user;
+    public void getRandomSeats(long timeId){
 
-        if(givenUser!=null) {
-            user = userRepository.findByCredentialsLoginName(givenUser.getCredentials().getLoginName());
-            return user == null;
-        }else
-            return true;
+        Time time = timesRepository.findTimeById(timeId);
+        Random rand = new Random();
 
-    }
+        int random = rand.nextInt(36, 96);
+        int dividedByTwelve = random % 12;
 
-    public boolean isEmailValid(String email) {
-        String[] kukac = null;
+        long maxId = getMaxSeatId() + 1;
 
-        if(email.contains("@")) {
-
-            kukac = email.split("@");
-
-            if (!kukac[1].equalsIgnoreCase("gmail.com") && !kukac[1].equalsIgnoreCase("freemail.hu") &&
-                    !kukac[1].equalsIgnoreCase("gmail.hu") && !kukac[1].equalsIgnoreCase("student.uni-miskolc.hu")
-                    && !kukac[1].equalsIgnoreCase("citromail.hu") && !kukac[1].equalsIgnoreCase("yahoo.com")) {
-
-                return false;
-            }else {
-                return true;
+        if(time.getSeats().size()==0) {
+            if (dividedByTwelve != 0) {
+                random += 12 - dividedByTwelve;
             }
-        }else
-            return false;
+
+            for (int i = 0; i < random; i++) {
+                seatRepository.save(new Seat(maxId + Long.valueOf(i), true, time));
+            }
+
+        }
 
     }
 
-    public boolean isPhoneNumberUnique(String phone) {
-        User givenUser = userRepository.findByPhoneNumber(phone);
-        User user;
+    public long getMaxSeatId(){
 
-        if(givenUser!=null) {
-            user = userRepository.findByPhoneNumber(givenUser.getPhoneNumber());
-            return user == null;
+        if(seatRepository.findAll().size()>0) {
+            long max = seatRepository.findAll().get(0).getId();
+
+            for (Seat seat : seatRepository.findAll()) {
+                if (seat.getId() > max) {
+                    max = seat.getId();
+                }
+            }
+
+
+            return max;
         }else
-            return true;
+            return 0;
 
     }
 
+    public void reserveSeats(String[] seatArray){
+
+        for (int i=0; i<seatArray.length; i++) {
+            if(!(seatArray[i].isEmpty() || seatArray[i].equalsIgnoreCase(""))) {
+                long id = Long.parseLong(seatArray[i]);
+                seatRepository.findById(id).setFree(false);
+                seatRepository.save(seatRepository.findById(id));
+            }
+        }
+
+    }
+
+    public long getMaxMovieId(){
+
+        if(movieRepository.findAll().size()>0) {
+            long max = movieRepository.findAll().get(0).getId();
+
+            for (Movie movie : movieRepository.findAll()) {
+                if (movie.getId() > max) {
+                    max = movie.getId();
+                }
+            }
+
+
+            return max;
+        }else
+            return 0;
+
+    }
+    public void addMovieToRepository(Movie movie){
+
+        movie.setId(getMaxMovieId()+1);
+        movieRepository.save(movie);
+
+    }
+
+    public long getMaxTimeId(){
+
+        if(timesRepository.findAll().size()>0) {
+            long max = timesRepository.findAll().get(0).getId();
+
+            for (Time time : timesRepository.findAll()) {
+                if (time.getId() > max) {
+                    max = time.getId();
+                }
+            }
+
+
+            return max;
+        }else
+            return 0;
+
+    }
+
+    public void addTimeToRepository(Time time){
+
+        time.setId(getMaxTimeId()+1);
+        timesRepository.save(time);
+
+    }
+
+    public void checkMovieImages(MultipartFile image1, String imageName) throws IOException {
+        long id = getMaxMovieId() + 1;
+
+        String expected_name = id + ".jpg";
+
+        if (!imageName.equals(expected_name)) {
+            imageName = expected_name;
+        }
+
+        saveFile("app/src/main/resources/static/images/movie", imageName, image1);
+
+    }
+
+    public void changeMovieDetails(Movie movie){
+        movieRepository.save(movie);
+    }
+
+    public void changeTimeDetails(Time time){
+        timesRepository.save(time);
+    }
+
+    public void deleteMovie(Movie movie){
+        movieRepository.delete(movie);
+    }
 
 }

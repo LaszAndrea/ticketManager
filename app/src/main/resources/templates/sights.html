@@ -76,20 +76,20 @@
             <h6 class="mt-4">A következő id: [[${nextId}]]</h6>
             <div class="form-group mt-4">
                 <label for="name">Név</label>
-                <input type="text" id="name" class="form-control" th:field="*{name}" th:classappend="${#fields.hasErrors('name')}? error"/>
+                <input type="text" id="name" class="form-control" th:field="*{name}" required th:classappend="${#fields.hasErrors('name')}? error"/>
                 <span class="text-danger" th:if="${#fields.hasErrors('name')}"
                       th:errors="*{name}"></span>
             </div>
             <div class="form-group d-flex flex-column mt-4 p-0">
                 <label for="description">Leírás</label>
-                <textarea class="form-control mt-2" th:field="*{description}" id="description" style="height: 160px; resize:none"
+                <textarea class="form-control mt-2" th:field="*{description}" id="description" required style="height: 160px; resize:none"
                           th:classappend="${#fields.hasErrors('description')}? error"></textarea>
                 <span class="text-danger" th:if="${#fields.hasErrors('description')}"
                       th:errors="*{description}"></span>
             </div>
             <div class="form-group d-flex flex-column mt-4">
                 <label for="address">Cím</label>
-                <input type="text" class="form-control mt-2" th:field="*{address}" id="address" th:classappend="${#fields.hasErrors('address')}? error">
+                <input type="text" class="form-control mt-2" th:field="*{address}" id="address" required th:classappend="${#fields.hasErrors('address')}? error">
                 <span class="text-danger" th:if="${#fields.hasErrors('address')}"
                       th:errors="*{address}"></span>
             </div>
@@ -152,5 +152,6 @@
 </body>
 
 <footer th:replace="/footer.html :: footer"/>
+<script src="js/alertForRegistration.js"></script>
 
 </html>

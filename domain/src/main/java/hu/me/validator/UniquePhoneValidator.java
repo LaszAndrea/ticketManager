@@ -18,7 +18,7 @@ public class UniquePhoneValidator implements ConstraintValidator<UniquePhone, St
     public boolean isValid(String phone, ConstraintValidatorContext context) {
         if(userRepository!=null) {
             return phone != null &&
-                    isPhoneNumberUnique(phone);
+                    isPhoneNumberUnique(phone) && isPhoneNumberValid(phone);
         }else
             return true;
     }
@@ -32,6 +32,32 @@ public class UniquePhoneValidator implements ConstraintValidator<UniquePhone, St
             return user == null;
         }else
             return true;
+
+    }
+
+    public boolean isPhoneNumberValid(String phone){
+
+        String[] tel = phone.split("\\+");
+        int length = tel[0].length();
+
+        if(tel!=null){
+            if(tel[0].equalsIgnoreCase("")){
+
+                if(tel[1].contains("36")){
+                    length = tel[1].length();
+                    if(length != 11){
+                        return false;
+                    }
+                } else{
+                    return false;
+                }
+
+            } else if(length != 11){
+                return false;
+            }
+        }
+
+        return true;
 
     }
 

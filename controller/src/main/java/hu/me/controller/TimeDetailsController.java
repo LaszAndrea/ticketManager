@@ -49,6 +49,8 @@ public class TimeDetailsController {
     @GetMapping(value="/time-details")
     public String showTimeDetails(Model model, @RequestParam("timeId") long timeId, @RequestParam("movieId") long movieId) {
 
+        ticketService.getRandomSeats(timeId);
+
         model.addAttribute("typePrice", ticketService.tickets());
         model.addAttribute("day",ticketService.dayOfWeek(ticketService.findTimeById(timeId)));
         model.addAttribute("seatsWithMovie", ticketService.getSeatsForTime(ticketService.findTimeById(timeId)));

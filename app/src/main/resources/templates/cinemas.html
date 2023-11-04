@@ -19,7 +19,7 @@
     .row img:hover {
         transform: scale(1.05);
     }
-    #ageLimit {
+    .ageLimit {
         color: white;
         border-radius: 50%;
         text-align: center;
@@ -60,21 +60,25 @@
 
 <div id="all">
     <div class="containerShape">
-        <form th:action="@{/cinemas}" class="d-flex justify-content-center" style="margin-top: 10%; position: relative; z-index: 5; display: flex; align-items: center;">
-            <input type="date" class="form-control me-3" th:value="${{today}}" th:min="${{today}}" th:max="${{maxAfterToday}}" th:name="selectedDate" id="selectedDate" style="width: 15%"/>
-            <input class="form-control me-3" type="search" name="searched" th:value="${searched}" placeholder="A film címe..." style="width: 25%; margin-left: 5%">
-            <button class="btn ms-3" type="submit" style="background-color: #04BF8A; margin-right: 5%">Keresés</button>
-            <select class="form-select" style="width: 20%">
-                <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}"></option>
-            </select>
-        </form>
+            <form sec:authorize="!hasAuthority('ADMIN')" th:action="@{/cinemas}" class="d-flex justify-content-center" style="margin-top: 10%; position: relative; z-index: 5; display: flex; align-items: center;">
+                <input type="date" class="form-control me-3" th:value="${{today}}" th:min="${{today}}" th:max="${{maxAfterToday}}" th:name="selectedDate" id="selectedDate" style="width: 15%"/>
+                <input class="form-control me-3" type="search" name="searched" th:value="${searched}" placeholder="A film címe..." style="width: 25%; margin-left: 5%">
+                <button class="btn ms-3" type="submit" style="background-color: #04BF8A; margin-right: 5%">Keresés</button>
+                <select class="form-select" style="width: 20%" name="selectedGenre" id="selectedGenre">
+                    <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}"></option>
+                </select>
+                <input class="form-control me-3" id="category" hidden name="category" th:value="${category}" style="width: 25%; margin-left: 5%">
+            </form>
+        <div class="text-center mx-auto">
+            <a sec:authorize="hasAuthority('ADMIN')" th:if="${category == 'cinema'}" th:href="@{/addMovie(category=${category})}" class="btn mx-auto" style="margin-top: 10%; position: relative; z-index: 5; color:white; align-items: center; background-color: #04BF8A; cursor: pointer">Film hozzáadása</a>
+            <a sec:authorize="hasAuthority('ADMIN')" th:if="${category == 'theatre'}" th:href="@{/addMovie(category=${category})}" class="btn mx-auto" style="margin-top: 10%; position: relative; z-index: 5; color:white; align-items: center; background-color: #04BF8A; cursor: pointer">Előadás hozzáadása</a>
+        </div>
         <svg viewBox="0 0 500 130" preserveAspectRatio="xMinYMin meet">
             <path d="M0,100 C150,200 350,0 500,100 L500,00 L0,0 Z" style="stroke: none; fill:rgba(25, 135, 84, 0.6);"></path>
         </svg>
     </div>
-    <h6 th:text="${selectedDate}"></h6>
-    <div class="container mb-2" id="contentContainer" style="margin-top: 15%">
-        <div class="row mb-3" th:each="movie : ${filteredList}">
+    <div sec:authorize="!hasAuthority('ADMIN')" class="container mb-2" id="contentContainer" th:fragment="contentFragment" style="margin-top: 15%">
+        <div class="row mb-3" th:each="movie : ${filteredList}" th:if="${movie.category.toString().toLowerCase() == category}">
             <div class="col-sm-4 ms-4 mb-4 d-flex flex-column">
                 <img class="rounded" th:src="@{/images/movie/__${movie.id}__.jpg}" style="object-fit: cover; width: 100%; height: 15vw;" alt="Card image cap">
             </div>
@@ -82,15 +86,43 @@
                 <div class="card-body d-flex flex-column">
                     <div class="card-contents" style="height: auto; overflow: hidden;">
                         <h5>[[${movie.name}]]</h5>
-                        <h6 id="ageLimit">[[${movie.age}]]</h6>
+                        <h6 class="ageLimit">[[${movie.age}]]</h6>
                     </div>
                     <div>
                         <p class="mt-2 mb-2" th:text="${movie.description}" style="font-style: 10px"></p>
                     </div>
                     <div sec:authorize="!(isAnonymous())">
-                        <a class="btn mt-2 me-2" th:href="@{/time-details(timeId=${time.id}, movieId=${movie.id})}" th:each="time : ${timeListModel.timeModel}" th:if="${movie.id == time.movie.id}" style="background-color: #04BF8A;">
-                            [[${time.time_date.getHour()}]]:[[${time.time_date.getMinute()}]]
+                        <a class="btn mt-2 me-2" th:href="@{/time-details(timeId=${time.id}, movieId=${movie.id})}" th:each="time : ${timeListModel}" th:if="(${(movie.id == time.movie.id)})" style="background-color: #04BF8A;">
+                            [[${time.time_date.getHour()}]]:[[${time.time_date.getMinute() < 10 ? '0' + time.time_date.getMinute() : time.time_date.getMinute()}]]
                         </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div sec:authorize="hasAuthority('ADMIN')" class="container mb-2" th:fragment="contentFragment" style="margin-top: 15%">
+        <div class="row mb-3" th:each="movie : ${allMovies}" th:if="${movie.category.toString().toLowerCase() == category}">
+            <div class="col-sm-4 ms-4 mb-4 d-flex flex-column">
+                <img class="rounded" th:src="@{/images/movie/__${movie.id}__.jpg}" style="object-fit: cover; width: 100%; height: 15vw;" alt="Card image cap">
+            </div>
+            <div class="col h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="card-contents" style="height: auto; overflow: hidden;">
+                        <h5><a th:href="@{/changeMovie(movieId=${movie.id}, category=${category})}">[[${movie.name}]]</a></h5>
+                        <h6 class="ageLimit">[[${movie.age}]]</h6>
+                    </div>
+                    <div>
+                        <p class="mt-2 mb-2" th:text="${#strings.length(movie.description) > 220 ? #strings.substring(movie.description, 0, 120) + '...' : movie.description}" style="font-style: 10px"></p>
+                    </div>
+                    <div>
+                        <a class="btn mt-2 me-2" th:each="time : ${allTimes}" th:if="(${(movie.id == time.movie.id)})"  th:href="@{/changeCurrentTime(timeId=${time.id}, movieId=${movie.id}, category=${category})}" style="background-color: #04BF8A;">
+                            [[${time.time_date.getYear()}]].[[${time.time_date.getMonthValue()}]].[[${time.time_date.getDayOfMonth()}]] [[${time.time_date.getHour()}]]:[[${time.time_date.getMinute() < 10 ? '0' + time.time_date.getMinute() : time.time_date.getMinute()}]]
+                        </a>
+                    </div>
+                    <div>
+                        <a class="btn mt-2 me-2" th:href="@{/addTime(movieId=${movie.id}, category=${category})}" style="background-color: #04BF8A;">Időpont hozzáadása</a>
+                        <a class="btn mt-2 me-2" th:href="@{/delete-movie(movieId=${movie.id})}" style="background-color: red;" type="submit">Törlés</a>
                     </div>
                 </div>
             </div>
@@ -99,7 +131,8 @@
 </div>
 
 <script src="js/cinemas.js"></script>
-    <footer th:replace="/footer.html :: footer"/>
+<script src="js/alertForRegistration.js"></script>
+<footer th:replace="/footer.html :: footer"/>
 
 </body>
 </html>

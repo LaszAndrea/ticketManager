@@ -1,6 +1,8 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', ageLimit());
 
-    const ages = document.querySelectorAll("#ageLimit");
+function ageLimit() {
+
+    const ages = document.querySelectorAll(".ageLimit");
 
     if(ages.length!=0){
         ages.forEach((age, index1) =>{
@@ -19,17 +21,39 @@ document.addEventListener('DOMContentLoaded', function() {
         })
     }
 
-})
+}
 
-/*document.getElementById('selectedDate').addEventListener('change', function() {
-    var selectedDate = this.value;
 
-    // Itt használj AJAX vagy Fetch API-t az adatok elküldéséhez a szervernek
-    // Például Fetch API használata:
-    fetch('/cinemas?selectedDate=' + selectedDate)
-        .then(response => response.text())
-        .then(data => {
-            // Adataidra való frissítés
-            document.getElementById('contentContainer').innerHTML = data;
-        });
-});*/
+document.getElementById("selectedDate").onchange = changeMovies;
+document.getElementById("selectedGenre").onchange = changeMovies;
+
+function changeMovies() {
+
+     var selectedDate = document.getElementById("selectedDate").value;
+     var selectedGenre = document.getElementById("selectedGenre").value;
+     var category = document.getElementById("category").value;
+
+     var request = new XMLHttpRequest();
+
+     request.open("POST", "/cinemas?date=" + selectedDate + "&genre=" + selectedGenre + "&category=" + category, true);
+
+     request.onreadystatechange = function () {
+         if (request.readyState === 4) {
+             if (request.status === 200) {
+                 var response = request.responseText;
+                 var container = document.getElementById("contentContainer");
+                 container.innerHTML = response;
+                 ageLimit();
+             }
+             else {
+                 console.error("Hiba történt a kérés során.");
+             }
+         }
+     };
+
+     request.send();
+
+}
+
+
+

@@ -5,8 +5,11 @@ public enum Genre {
     COMEDY,
     HORROR,
     ACTION,
-    KID,
+    KIDS,
     DRAMA,
-    FANTASY
+    FANTASY,
+
+    BELTÉRI,
+    KÜLTÉRI
 
 }

@@ -111,15 +111,15 @@
                     <form class="align-items-end" id="updateForm" th:action="@{/update-details(sightId=${sight.id})}" th:object="${sight}" method="post">
                         <div class="form-group d-flex flex-column mt-2">
                             <label for="name">Név</label>
-                            <input type="text" class="form-control mt-2" th:field="*{name}" id="name">
+                            <input type="text" class="form-control mt-2" th:field="*{name}" required id="name">
                         </div>
                         <div class="form-group d-flex flex-column mt-3 p-0">
                             <label for="description">Leírás</label>
-                            <textarea class="form-control mt-2" th:field="*{description}" id="description" style="height: 250px; resize:none"></textarea>
+                            <textarea class="form-control mt-2" th:field="*{description}" id="description" required style="height: 250px; resize:none"></textarea>
                         </div>
                         <div class="form-group d-flex flex-column mt-3">
                             <label for="address">Cím</label>
-                            <input type="text" class="form-control mt-2" th:field="*{address}" id="address">
+                            <input type="text" class="form-control mt-2" th:field="*{address}" required id="address">
                         </div>
                         <div class="form-group">
                             <input type="hidden" name="sightId" th:value="${sight.id}">

@@ -48,19 +48,19 @@
                     <dt class="col-sm-4">Teljes név</dt>
                     <dd class="col-sm-5" th:text="${loggedInUser.fullName}" />
                     <dd class="col-md-3">
-                        <a th:href="@{/change-user-details(userId=${loggedInUser.id}, change=${'name'})}"><p class="modify mt-3 p-0">Módosítás</p></a>
+                        <a th:href="@{/change-user-name(userId=${loggedInUser.id})}"><p class="modify mt-3 p-0">Módosítás</p></a>
                     </dd>
 
                     <dt class="col-md-4">Telefonszám</dt>
                     <dd class="col-md-5" th:text="${loggedInUser.phoneNumber}" />
                     <dd class="col-md-3">
-                        <a th:href="@{/change-user-details(userId=${loggedInUser.id}, change=${'phone'})}"><p class="modify mt-3 p-0">Módosítás</p></a>
+                        <a th:href="@{/change-user-phone(userId=${loggedInUser.id})}"><p class="modify mt-3 p-0">Módosítás</p></a>
                     </dd>
 
                     <dt class="col-sm-4">Email-cím</dt>
                     <dd class="col-sm-5" th:text="${loggedInUser.credentials.loginName}" />
                     <dd class="col-md-3">
-                        <a th:href="@{/change-user-details(userId=${loggedInUser.id}, change=${'email'})}"><p class="modify mt-3 p-0">Módosítás</p></a>
+                        <a th:href="@{/change-user-email(userId=${loggedInUser.id})}"><p class="modify mt-3 p-0">Módosítás</p></a>
                     </dd>
 
                 </dl>
@@ -90,13 +90,13 @@
 
         <div class="card border-3 mt-3 mb-5">
             <div class="card-header bg-success">
-                <h3>Statistics</h3>
+                <h3>Foglalások</h3>
             </div>
             <div class="card-body bg-light">
                 <dl class="row">
                     <dt class="col-sm-4">Eddigi foglalások</dt>
                     <div th:if="${#lists.size(userReservations)} != 0" th:each="time : ${userReservations}">
-                        <a th:href="@{/reservation(timeId=${time.id}, movieId=${time.movie.id})}"><dd class="col-sm-6">[[${time.movie.name}]]: [[${time.time_date}]]</dd></a>
+                        <dd class="col-sm-6">[[${time.movie.name}]]: [[${time.time_date}]]</dd>
                     </div>
                     <div th:if="${#lists.size(userReservations)} eq 0">
                         <p class="mt-4">Nincs megjelenítendő adat!</p>

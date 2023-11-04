@@ -31,12 +31,6 @@ public class User {
     private Credentials credentials;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Review> reviews;
-    /*@ManyToMany
-    @JoinTable(
-            name = "_3_Reserved",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id"))
-    private List<Movie> movies;*/
 
     @ManyToMany
     @JoinTable(

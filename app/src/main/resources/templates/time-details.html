@@ -50,6 +50,19 @@
         .chosen{
             background-color: orange;
         }
+        .addMargin{
+            margin-left: 5%;
+        }
+        .booked{
+            background-color: red;
+            color: white;
+            cursor: not-allowed;
+        }
+        #notEnoughSeats{
+            color: red;
+            font-weight: bold;
+
+        }
     </style>
 
 </head>
@@ -71,15 +84,15 @@
             <div class="col-md-2"></div>
             <div class="col-md-2">
                 <h5 th:text="${movie.name}"></h5>
-                <h6 class="mt-3">[[${day}]], [[${time.time_date.getYear()}]].[[${time.time_date.getMonthValue()}]].[[${time.time_date.getDayOfMonth()}]]</h6>
-                <h6>[[${time.time_date.getHour()}]]:[[${time.time_date.getMinute()}]]</h6>
-                <p class="mt-4 mb-0">terem??</p>
+                <h6 class="mt-3" th:if="${time.time_date != null}">[[${day}]], [[${time.time_date.getYear()}]].[[${time.time_date.getMonthValue()}]].[[${time.time_date.getDayOfMonth()}]]</h6>
+                <h6 th:if="${time.time_date != null}">[[${time.time_date.getHour()}]]:[[${time.time_date.getMinute()}]]</h6>
                 <p class="mb-0">CC Nyíregyháza</p>
-                <p class="mb-0" id="ageLimit">Korhatár: [[${movie.age}]]</p>
+                <p class="mb-0" id="ageLimit" th:if="${movie != null}">Korhatár: [[${movie.age}]]</p>
             </div>
             <!--Jegyek kiválasztása-->
             <div class="col-md-6" id="tickets">
                 <h2>Jegyek kiválasztása</h2>
+                <div id="notEnoughSeats"></div>
                 <div id="disability">
                     <p>A fogyatékkal élok számára szóló jegy kizárólag érvényes SINOSZ, MVGYOSZ, MEOSZ, AOSZ, MACIE igazolvánnyal együtt jogosít belépésre.</p>
                 </div>
@@ -89,8 +102,8 @@
                 <div id="student">
                     <p>Diákjegy csak NAPPALI tagozatos, érvényes, eredeti diákigazolvánnyal váltható (fénymásolat, fotó nem elfogadható).
                         Amit elfogadunk:
-                        - Köznevelés: Közoktatási 2022/2023 tanévre szóló matricával ellátott diákigazolvány, 16 év alatt, illetve azoknak akik 2022.08.31 után töltötték be a 16. életévüket, nem szükséges matrica a diákigazolványra.
-                        - Felsőoktatás: Felsőoktatási 2022/2023 második félévre szóló matricával ellátott diákigazolvány.</p>
+                        - Köznevelés: Közoktatási 2023/2024 tanévre szóló matricával ellátott diákigazolvány, 16 év alatt, illetve azoknak akik 2022.08.31 után töltötték be a 16. életévüket, nem szükséges matrica a diákigazolványra.
+                        - Felsőoktatás: Felsőoktatási 2023/2024 első félévre szóló matricával ellátott diákigazolvány.</p>
                 </div>
                 <div id="senior">
                     <p>A Szenior jegy 65 év felett hivatalos, személyazonosításra alkalmas okmánnyal váltható, és azzal együtt jogosít belépésre.</p>
@@ -113,33 +126,33 @@
                     <div class="col-md-12"><hr class="bordered"></div>
                 </div>
                 <div class="row mt-5">
-                    <div class="col-md-3"><a class="btn nextBtn" th:href="@{/cinemas}">Vissza</a></button></div>
+                    <div class="col-md-3"><a class="btn nextBtn" th:href="@{/cinemas?category=cinema}">Vissza</a></button></div>
                     <div class="col-md-6"></div>
-                    <div class="col-md-3"><a class="btn nextBtn" style="float:right" onclick="addUp(); next('#tickets', '#seats', 'first', 'second'); ">Ülőhely kiválasztása</a></div>
+                    <div class="col-md-3"><a class="btn nextBtn" style="float:right" onclick="addUp(); disableBookedSeats(); seatAmount();">Ülőhely kiválasztása</a></div>
                 </div>
             </div>
             <!--Ülőhelyek kiválasztása-->
             <div class="col-md-6" id="seats">
                 <h2>Ülőhelyek kiválasztása</h2>
                 <p id="many">?: ülőhely kiválasztása</p>
+                <h6 id="choseSeatsPlease"></h6>
                 <hr class="mt-2 mb-3 colorful">
                 <table>
                     <tr>
-                        <a th:each="seat, i : ${seatsWithMovie}" class="btn seatBtn" th:id="${seat.id}" th:text="${i.index+1}" th:onclick="minusSeat([[${seat.id}]]);"></a>
-                        <!--<a class="btn seatBtn" id="7" onclick="minusSeat(7)" style="margin-left: 5%">7</a>-->
+                        <button th:each="seat, i : ${seatsWithMovie}" th:classappend="${seat.free} ? '' : 'booked'" class="btn seatBtn" th:id="${seat.id}" th:text="${i.index+1}" th:onclick="minusSeat([[${seat.id}]]);"></button>
                     </tr>
                 </table>
                 <div class="row mt-5">
                     <div class="col-md-3"><a class="btn nextBtn" onclick="prev('#tickets', '#seats', 'first', 'second'); deleteAllSelected()">Vissza</a></button></div>
                     <div class="col-md-6"></div>
-                    <div class="col-md-3"><a class="btn nextBtn" style="float:right" onclick="next('#seats', '#data', 'second', 'third')">Adatok megadása</a></div>
+                    <div class="col-md-3"><a class="btn nextBtn" style="float:right" onclick="checkIfSeatsAreChosen()">Adatok megadása</a></div>
                 </div>
             </div>
             <!--Adatok a foglaláshoz-->
             <div class="col-md-6" id="data">
                 <h2>Adatok megadása</h2>
                 <hr class="mt-2 mb-3 colorful">
-                <form>
+                <form th:if="${loggedInUser != null}">
                     <div class="mb-3">
                         <label for="fullName" class="form-label">Teljes név</label>
                         <input type="text" class="form-control" id="fullName" th:value="${loggedInUser.fullName}" disabled>
@@ -150,7 +163,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="phone" class="form-label">Telefonszám</label>
-                        <input type="phone" class="form-control" id="phone" required>
+                        <input type="phone" class="form-control" id="phone" th:value="${loggedInUser.phoneNumber}" required>
                     </div>
                 </form>
                 <div class="row mt-5">
@@ -160,20 +173,19 @@
                 </div>
             </div>
             <!--Megadott adatok mutatása és a foglalás elküldése-->
-            <form class="col-md-6" id="confirm" th:action="@{/reservation(timeId=${time.id}, movieId=${movie.id})}" th:object="${reserveSeats}" method="post">
+            <form class="col-md-6" id="confirm" >
                 <div id="confirmName"></div>
                 <div id="confirmEmail">Email-cím:</div>
                 <div id="confirmPhone">Telefonszám:</div>
                 <div>Film címe:  [[${movie.name}]]</div>
                 <div>Időpont:  [[${time.time_date}]]</div>
                 <div id="chosenSeats">Kiválasztott székek:</div>
-                <!--<div class="hidden" th:each="seat : ${seatsWithMovie}">
-                    <p th:if="chosen a seat akkor adjuk hozzá a listához" th:field="*{seat}"></p>
-                </div>-->
+                <div hidden id="timeId"  th:text="${time.id}"></div>
+                <div hidden id="movieId"  th:text="${movie.id}"></div>
                 <div class="row mt-5">
                     <div class="col-md-3"><a class="btn nextBtn" onclick="prev('#data', '#confirm', 'third', 'fourth')">Vissza</a></button></div>
                     <div class="col-md-6"></div>
-                    <div class="col-md-3"><button class="btn nextBtn" type="submit" style="float:right">Foglalás</button></div>
+                    <div class="col-md-3"><button class="btn nextBtn" type="button" style="float:right" onclick="getSeats()">Foglalás</button></div>
                 </div>
             </form>
             <div class="col-md-2"></div>
@@ -188,7 +200,23 @@
     let szum = 0;
     let primalSum = 0;
 
-    var selectedSeats = "asd";
+    function getSeats() {
+
+         var selectedSeats = document.querySelectorAll('.chosen');
+         var string = "";
+
+         var timeId = document.getElementById("timeId").innerHTML;
+         var movieId = document.getElementById("movieId").innerHTML;
+
+         for(var i = 0; i<selectedSeats.length; i++){
+
+            string = string + "," + selectedSeats[i].id;
+
+         }
+
+         window.location.href = "/reservation?timeId=" + timeId + "&movieId=" + movieId + "&seats=" + string;
+
+    }
 
     function getFormData(){
 
@@ -203,7 +231,7 @@
         var chosenS = document.getElementsByClassName("chosen");
         for(let i = 0; i<chosenS.length; i++){
 
-            document.getElementById("chosenSeats").innerHTML = document.getElementById("chosenSeats").innerHTML + " " + chosenS[i].id;
+            document.getElementById("chosenSeats").innerHTML = document.getElementById("chosenSeats").innerHTML + " " + chosenS[i].innerHTML;
 
         }
 
@@ -228,12 +256,12 @@
 
         var btn = document.getElementById(btnNumber);
 
-        if(szum>0 && !(btn.classList.contains("chosen"))){
+        if(szum>0 && !(btn.classList.contains("chosen") && !(btn.classList.contains("booked")))){
             szum = szum - 1;
             btn.classList.add("chosen");
         }else{
-            szum = primalSum-1;
             deleteAllSelected();
+            szum = primalSum - 1;
             btn.classList.add("chosen");
         }
 
@@ -246,7 +274,9 @@
     }
 
     function deleteAllSelected(){
+
         var seats  = document.querySelectorAll('.seatBtn');
+        szum = 0;
 
         for(let i = 0; i<seats.length; i++){
             seats[i].classList.remove("chosen");
@@ -256,12 +286,60 @@
 
     function addUp(){
 
+        primalSum = 0;
+        szum = 0;
+
         for(let i=0; i<selectElements.length; i++){
             szum += parseInt(selectElements[i].value);
         }
 
         element.innerHTML = szum + ": ülőhely kiválasztása";
         primalSum = szum;
+
+    }
+
+    function disableBookedSeats(){
+        var seats  = document.querySelectorAll('.seatBtn');
+
+        for(let i=0; i<seats.length; i++){
+            if(seats[i].classList.contains("booked")){
+                seats[i].disabled = true;
+            }
+
+            if(i % 6 == 0 && i != 0 && i % 12 != 0 && i != seats.length-6 && i != seats.length-18){
+                seats[i].style.marginLeft = "5%";
+            }else if(i == seats.length - 12 || i == seats.length - 24){
+                seats[i].style.marginLeft = "3%";
+            }
+        }
+    }
+
+    function checkIfSeatsAreChosen(){
+        var seats  = document.querySelectorAll('.chosen');
+        var text = document.getElementById("choseSeatsPlease");
+
+        if(seats.length==primalSum){
+            next('#seats', '#data', 'second', 'third');
+            text.innerHTML="";
+        }else{
+            text.innerHTML="Kérem válassza ki a lefoglalni kívánt székeket!";
+        }
+
+    }
+
+    function seatAmount(){
+
+        var bookedSeats = document.querySelectorAll('.booked');
+        var allSeats = document.querySelectorAll('.seatBtn');
+        var freeSeats = allSeats.length - bookedSeats.length;
+        var text = document.getElementById("notEnoughSeats");
+
+        if(freeSeats >= primalSum){
+            next('#tickets', '#seats', 'first', 'second');
+        }else{
+            text.innerHTML="Nincsen annyi szabad hely, mint amennyi jegyet kiválasztott."
+        }
+
 
     }
 

@@ -16,7 +16,7 @@
         }
         .dmb {
             width: 300px !important;
-            height: 520px !important;
+            height: 580px !important;
             right: 0% !important;
         }
         .short{
@@ -56,7 +56,7 @@
 
             <!--Logo a cégnek-->
             <div class="navbar-brand">
-                <img class="me-auto ms-5" th:src="@{/images/logo_hu.png}" width="45%">
+                <a th:href="@{/homepage}"><img class="me-auto ms-5" th:src="@{/images/logo_hu.png}" width="45%"></a>
             </div>
 
             <!--Lehetőségek a navbaron-->
@@ -77,7 +77,7 @@
                         </a>
                         <ul class="dropdown-menu short" id="showEntertainment">
                             <li><a class="dropdown-item" th:href="@{/cinemas?category=cinema}">Mozi</a></li>
-                            <li><a class="dropdown-item" th:href="@{/theatre?category=theatre}">Színház</a></li>
+                            <li><a class="dropdown-item" th:href="@{/cinemas?category=theatre}">Színház</a></li>
                         </ul>
                     </li>
 
@@ -90,7 +90,9 @@
 
                 <!--Bejelentkezett felhasználó neve-->
                 <div sec:authorize="isAuthenticated()">
-                    <a th:href="@{/user-home-page}"><label class="nav-item me-4 text-light hover-underline-animation"  th:text="'Helló, ' + ${userName}" /></a>
+                    <a sec:authorize="hasAuthority('USER')" th:href="@{/user-home-page}">
+                        <label class="nav-item me-4 text-light hover-underline-animation"  th:text="'Helló, ' + ${userName}" /></a>
+                    <label sec:authorize="hasAuthority('ADMIN')" class="nav-item me-4 text-light hover-underline-animation"  th:text="'Helló, ' + ${userName}" />
                 </div>
 
                 <!--Kijelentkezés, amennyiben már valaki be van jelentkezve-->
@@ -105,18 +107,18 @@
                       Regisztráció
                     </button>
                     <form class="dropdown-menu dmb p-4 dropdown-menu-end" id="showRegistration" th:action="@{/save}" method="post" >
-                      <div class="mb-3">
+                      <div class="mb-4">
                         <label for="fullNameGiven" class="form-label">Teljes név</label>
                         <input type="text" class="form-control" th:field="*{fullName}" id="fullNameGiven" required minlength="2" maxlength="40">
                       </div>
                       <div class="mb-3">
                           <label for="phoneGiven" class="form-label">Telefonszám</label>
-                          <input type="tel" class="form-control" th:field="*{phoneNumber}" id="phoneGiven">
-                          <span class="text-danger" th:errorclass="error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+                          <input type="tel" class="form-control" th:field="*{phoneNumber}" id="phoneGiven" required>
+                          <span class="text-danger" th:errorclass="error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" ></span>
                       </div>
                       <div class="mb-3">
                         <label for="emailGiven" class="form-label">Email cím</label>
-                        <input type="email" class="form-control" th:field="*{credentials.loginName}" id="emailGiven" placeholder="email@pelda.hu">
+                        <input type="email" class="form-control" th:field="*{credentials.loginName}" id="emailGiven" placeholder="email@pelda.hu" required>
                         <span class="text-danger" th:errorclass="error" th:if="${#fields.hasErrors('credentials.loginName')}" th:errors="*{credentials.loginName}"></span>
                       </div>
                       <div class="mb-3">
@@ -131,19 +133,19 @@
                           </label>
                         </div>
                       </div>
-                      <button type="submit" class="btn btn-success" >Regisztráció</button>
+                      <button type="submit" class="btn btn-success" style="position: absolute; bottom: 0; margin-bottom: 7%">Regisztráció</button>
                     </form>
                 </div>
 
                 <!--Nyelv kiválasztása-->
-                <div class="nav-item dropdown me-4">
+                <!--<div class="nav-item dropdown me-4">
                     <button type="button" class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                         HU
                     </button>
                     <ul class="dropdown-menu short" id="showLanguage">
                         <li><a class="dropdown-item" href="#en.html">EN</a></li>
                     </ul>
-                </div>
+                </div>-->
 
             </div>
         </div>
@@ -151,7 +153,6 @@
     </header>
 
     <body>
-
     </body>
 
 </html>

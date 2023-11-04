@@ -15,4 +15,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     List<Seat> findByMovieTime(Time time_date);
 
+    Seat findById(long id);
+
 }

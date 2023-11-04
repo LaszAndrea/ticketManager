@@ -27,6 +27,7 @@ public class MovieTransformer {
             movieModel.setDescription(movie.getDescription());
             movieModel.setAge(movie.getAge());
             movieModel.setGenre(movie.getGenre());
+            movieModel.setCategory(movie.getCategory());
             //movieModel.setUser(movie.getUser());
             movieModel.setTimes(movie.getTimes());
             if (movie.getId() != null)
@@ -44,6 +45,7 @@ public class MovieTransformer {
         movie.setAge(movieModel.getAge());
         movie.setTimes(movieModel.getTimes());
         movie.setGenre(movieModel.getGenre());
+        movie.setCategory(movieModel.getCategory());
         //movie.setUser(movieModel.getUser());
         return movie;
     }
