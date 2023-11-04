@@ -43,8 +43,8 @@ public class HomeController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String register(@RequestHeader("referer") String referer, @Valid @ModelAttribute("newUser") UserModel newUser, BindingResult result, Model model, HttpServletRequest request) {
 
-        newUser.setRole(Role.ADMIN);
-        //newUser.setRole(Role.USER);
+        //newUser.setRole(Role.ADMIN);
+        newUser.setRole(Role.USER);
 
         if(result.hasErrors()){
             result.rejectValue("credentials.loginName", "error.user", "");
