@@ -116,7 +116,7 @@
                         <p class="mt-2 mb-2" th:text="${#strings.length(movie.description) > 220 ? #strings.substring(movie.description, 0, 120) + '...' : movie.description}" style="font-style: 10px"></p>
                     </div>
                     <div>
-                        <a class="btn mt-2 me-2" th:each="time : ${allTimes}" th:if="(${(movie.id == time.movie.id)})"  th:href="@{/changeCurrentTime(timeId=${time.id}, movieId=${movie.id}, category=${category})}" style="background-color: #04BF8A;">
+                        <a class="btn mt-2 me-2" th:each="time : ${allTimes}" th:if="(${(movie.id == time.movie.id)})"  th:href="@{/changeTime(timeId=${time.id}, movieId=${movie.id}, category=${category})}" style="background-color: #04BF8A;">
                             [[${time.time_date.getYear()}]].[[${time.time_date.getMonthValue()}]].[[${time.time_date.getDayOfMonth()}]] [[${time.time_date.getHour()}]]:[[${time.time_date.getMinute() < 10 ? '0' + time.time_date.getMinute() : time.time_date.getMinute()}]]
                         </a>
                     </div>

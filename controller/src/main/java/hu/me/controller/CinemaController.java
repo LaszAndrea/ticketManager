@@ -46,8 +46,8 @@ public class CinemaController {
 
     @GetMapping("/cinemas")
     public String showMovies(Model model, @Param("searched") String searched,
-                             @RequestParam(name = "date", required = false) String date,
-                             @RequestParam(name = "genre", required = false) String genre,
+                             @RequestParam(name = "selectedDate", required = false) String date,
+                             @RequestParam(name = "selectedGenre", required = false) String genre,
                              @RequestParam("category") String category){
 
         List<Movie> list = new ArrayList<>();
