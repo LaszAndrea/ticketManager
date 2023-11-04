@@ -351,7 +351,7 @@ public class TicketService implements TicketServiceInterface {
         return timesRepository.findTimeByUser(user);
     }
 
-    public void updateUserPhoneNumber(User user){
+    public void updateUser(User user){
         userRepository.save(user);
     }
 

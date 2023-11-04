@@ -71,13 +71,11 @@ public interface TicketServiceInterface {
 
     List<Seat> getSeatsForTime(Time time);
 
-    //void addMovie(Movie movie, User user);
     void reservation(Time time, User user);
 
-    //List<Movie> getMoviesForUser(User user);
     List<Time> getReservationsForUser(User user);
 
-    void updateUserPhoneNumber(User user);
+    void updateUser(User user);
 
     List<News> gatherNews();
 

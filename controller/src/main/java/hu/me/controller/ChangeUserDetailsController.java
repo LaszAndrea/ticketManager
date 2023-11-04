@@ -73,7 +73,7 @@ public class ChangeUserDetailsController {
             User user = ticketService.findUserById(userId);
             user.setPhoneNumber(userModel.getPhoneNumber());
 
-            ticketService.save(user);
+            ticketService.updateUser(user);
 
             return "redirect:user-home-page";
 
@@ -97,7 +97,7 @@ public class ChangeUserDetailsController {
             Authentication newEmailAuth = new UsernamePasswordAuthenticationToken(user.getCredentials().getLoginName(), currentAuth.getCredentials(), currentAuth.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(newEmailAuth);
 
-            ticketService.save(user);
+            ticketService.updateUser(user);
 
             return "redirect:user-home-page";
 
@@ -116,7 +116,7 @@ public class ChangeUserDetailsController {
 
             User user = ticketService.findUserById(userId);
             user.setFullName(userModel.getFullName());
-            ticketService.save(user);
+            ticketService.updateUser(user);
 
             return "redirect:user-home-page";
 
